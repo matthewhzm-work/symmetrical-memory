@@ -1,208 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Selected Works — Matthew Ho</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg:       #f5f0e8; --bg-alt: #ede8df; --bg-card: #e9e3d9;
-      --ink:      #1c1a17; --ink-mid: #5a554e;
-      --ink-light:rgba(28,26,23,0.35); --border: rgba(28,26,23,0.11);
-      --orange:   #c94a12;
-      --display:  'Playfair Display', Georgia, serif;
-      --sans-ui:  'Syne', system-ui, sans-serif;
-      --body:     "DM Sans", system-ui, sans-serif;
-      --mono:     "DM Mono", monospace;
-    }
-    html { scroll-behavior: smooth; }
-    body { background:var(--bg); color:var(--ink); font-family:var(--body); font-weight:300; min-height:100vh; overflow-x:hidden; }
-    body::before { content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:0.025; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work — Matthew Ho</title>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root { --bg:#F0EFEA; --black:#111111; --orange:#E85C1A; --gray-mid:#C8C7C0; --gray-dark:#555550; --white:#FFFFFF; --nav-h:72px; }
+  html { scroll-behavior:smooth; }
+  body { background:var(--bg); color:var(--black); font-family:'DM Sans',sans-serif; font-size:16px; line-height:1.6; overflow-x:hidden; }
 
-    nav { position:fixed; top:0; left:0; right:0; z-index:600; display:flex; align-items:center; justify-content:space-between; padding:1.5rem 3rem; background:rgba(245,240,232,0.95); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
-    .nav-logo { font-family:var(--sans-ui); font-size:0.8rem; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--ink); text-decoration:none; }
-    .nav-links { display:flex; align-items:center; gap:2.5rem; list-style:none; }
-    .nav-links a { font-family:var(--sans-ui); font-size:0.7rem; font-weight:500; letter-spacing:0.16em; text-transform:uppercase; color:var(--ink-mid); text-decoration:none; transition:color 0.2s; }
-    .nav-links a:hover, .nav-links a.active { color:var(--orange); }
-    .nav-links .li-icon svg { width:15px; height:15px; fill:var(--ink-mid); transition:fill 0.2s; display:block; }
-    .nav-links .li-icon:hover svg { fill:var(--orange); }
+  nav { position:fixed; top:0; left:0; right:0; height:var(--nav-h); display:flex; align-items:center; justify-content:space-between; padding:0 48px; background:var(--bg); border-bottom:1.5px solid var(--black); z-index:100; }
+  .nav-logo { font-family:'Caprasimo',cursive; font-size:26px; color:var(--black); text-decoration:none; }
+  .nav-logo span { color:var(--orange); }
+  .nav-back { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--black); text-decoration:none; display:flex; align-items:center; gap:8px; transition:color 0.2s; }
+  .nav-back::before { content:'←'; }
+  .nav-back:hover { color:var(--orange); }
 
-    .page-header { position:relative; z-index:1; padding:7rem 3rem 2.5rem; border-bottom:1px solid var(--border); opacity:0; animation:fadeUp 0.7s 0.1s ease forwards; }
-    .page-title { font-family:var(--display); font-size:clamp(3.5rem, 6vw, 6rem); font-weight:700; letter-spacing:-0.02em; line-height:1.0; color:var(--ink); }
-    .page-title em { font-style:italic; color:var(--orange); }
+  .work-hero { margin-top:var(--nav-h); padding:64px 48px 48px; border-bottom:1px solid var(--gray-mid); }
+  .work-meta { display:flex; align-items:center; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+  .work-brand { font-family:'DM Mono',monospace; font-size:12px; letter-spacing:0.16em; text-transform:uppercase; color:var(--orange); font-weight:500; }
+  .work-award-pill { background:var(--black); color:var(--bg); font-family:'DM Mono',monospace; font-size:10px; letter-spacing:0.1em; text-transform:uppercase; padding:5px 12px; border-radius:100px; }
+  .work-title { font-family:'Caprasimo',cursive; font-size:clamp(32px,5vw,64px); line-height:1.05; color:var(--black); margin-bottom:16px; }
+  .work-subtitle { font-size:18px; font-weight:300; color:var(--gray-dark); max-width:640px; margin-bottom:28px; }
+  .work-tags { display:flex; flex-wrap:wrap; gap:8px; }
+  .tag { font-size:11px; font-family:'DM Mono',monospace; padding:5px 12px; border-radius:100px; border:1px solid var(--gray-mid); color:var(--gray-dark); }
 
-    .work-layout { position:relative; z-index:1; display:grid; grid-template-columns:1fr 180px; gap:0; align-items:start; }
+  .work-content { padding:64px 48px; }
 
-    .grid-area { padding:2.5rem 2.5rem 6rem 3rem; border-right:1px solid var(--border); }
+  /* VIDEO */
+  .video-block { margin-bottom:64px; }
+  .video-label { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--orange); margin-bottom:16px; }
+  .video-wrap { position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:20px; background:var(--black); }
+  .video-wrap iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:0; border-radius:20px; }
+  .video-wrap video { position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; border-radius:20px; }
+  .video-caption { font-size:13px; color:var(--gray-dark); margin-top:12px; font-weight:300; }
 
-    #proj-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.5rem; }
+  /* COLLATERALS */
+  .collaterals-block { }
+  .collaterals-label { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase; color:var(--orange); margin-bottom:24px; }
+  .collaterals-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px,1fr)); gap:16px; }
+  .collateral-item { border-radius:16px; overflow:hidden; background:var(--black); position:relative; }
+  .collateral-item img { width:100%; height:100%; object-fit:cover; display:block; }
+  .collateral-item.portrait { aspect-ratio:4/5; }
+  .collateral-item.landscape { aspect-ratio:16/9; }
+  .collateral-item.square { aspect-ratio:1/1; }
+  .collateral-item video { width:100%; display:block; }
+  .col-caption { font-size:12px; color:var(--gray-dark); margin-top:8px; font-weight:300; font-family:'DM Mono',monospace; letter-spacing:0.04em; }
+  .col-placeholder { width:100%; aspect-ratio:16/9; display:flex; align-items:center; justify-content:center; background:var(--black); color:rgba(255,255,255,0.15); font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.1em; border-radius:16px; }
 
-    .proj-card { display:block; text-decoration:none; color:inherit; position:relative; overflow:hidden; background:var(--bg-card); border-radius:12px; aspect-ratio:4/3; opacity:0; animation:fadeUp 0.5s ease forwards; }
-    .proj-card.featured { grid-column:1/-1; aspect-ratio:16/7; }
+  /* DESCRIPTION */
+  .desc-block { max-width:680px; margin-bottom:64px; }
+  .desc-text { font-size:17px; font-weight:300; line-height:1.85; color:var(--black); }
 
-    .card-img { position:absolute; inset:0; border-radius:12px; overflow:hidden; }
-    .card-img img { width:100%; height:100%; object-fit:cover; filter:brightness(0.65) saturate(0.85); transition:filter 0.3s; }
-    .proj-card:hover .card-img img { filter:brightness(0.45) saturate(0.7); }
-    .card-img::after { content:""; position:absolute; inset:0; background:rgba(201,74,18,0.5); border-radius:12px; opacity:0; transition:opacity 0.3s; }
-    .proj-card:hover .card-img::after { opacity:1; }
+  /* NEXT PROJECT */
+  .next-project { padding:64px 48px; border-top:1.5px solid var(--black); background:var(--black); }
+  .next-label { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:20px; }
+  .next-link { text-decoration:none; display:inline-flex; align-items:baseline; gap:16px; }
+  .next-title { font-family:'Caprasimo',cursive; font-size:clamp(24px,3.5vw,44px); color:var(--bg); transition:color 0.2s; }
+  .next-link:hover .next-title { color:var(--orange); }
+  .next-arrow { font-size:clamp(24px,3.5vw,44px); color:var(--orange); }
 
-    .card-img.no-img { background:var(--bg-card); }
-    .card-img.no-img::before { content:attr(data-brand); position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-family:var(--display); font-size:4rem; font-weight:700; color:rgba(28,26,23,0.07); }
+  footer { background:var(--black); color:var(--gray-mid); padding:28px 48px; display:flex; align-items:center; justify-content:space-between; font-size:12px; font-family:'DM Mono',monospace; border-top:1px solid rgba(200,199,192,0.15); }
+  .footer-logo { font-family:'Caprasimo',cursive; font-size:18px; color:var(--bg); }
+  .footer-logo span { color:var(--orange); }
 
-    .card-info { position:absolute; bottom:0; left:0; right:0; padding:2rem 1.75rem 1.6rem; background:linear-gradient(to top,rgba(20,17,13,0.95) 0%,rgba(20,17,13,0.6) 55%,transparent 100%); border-radius:0 0 12px 12px; }
-    .card-meta { display:flex; align-items:center; gap:0.6rem; flex-wrap:wrap; margin-bottom:0.4rem; }
-    .card-brand { font-family:var(--mono); font-size:0.58rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--orange); }
-    .card-year  { font-family:var(--mono); font-size:0.55rem; letter-spacing:0.1em; color:rgba(245,240,232,0.45); }
-    .card-award { font-family:var(--mono); font-size:0.52rem; letter-spacing:0.08em; text-transform:uppercase; padding:2px 7px; border-radius:2px; }
-    .card-award.gold    { background:#c9a84c; color:#1c1a17; }
-    .card-award.silver  { background:#8a96a6; color:#1c1a17; }
-    .card-award.bronze  { background:#9a7048; color:#1c1a17; }
-    .card-award.shortlist,.card-award.merit,.card-award.finalist { border:1px solid rgba(245,240,232,0.25); color:rgba(245,240,232,0.65); }
-    .card-title { font-family:var(--display); font-size:clamp(1.1rem, 2.2vw, 1.9rem); font-weight:700; letter-spacing:-0.01em; line-height:1.1; color:#f5f0e8; }
+  .not-found { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; gap:16px; text-align:center; }
+  .not-found h2 { font-family:'Caprasimo',cursive; font-size:40px; }
+  .not-found a { font-family:'DM Mono',monospace; font-size:13px; color:var(--orange); text-decoration:none; }
 
-    .card-tags { display:flex; gap:0.35rem; flex-wrap:wrap; margin-top:0.6rem; opacity:0; transform:translateY(5px); transition:opacity 0.25s,transform 0.25s; }
-    .proj-card:hover .card-tags { opacity:1; transform:translateY(0); }
-    .card-tag { font-family:var(--body); font-size:0.55rem; letter-spacing:0.08em; text-transform:uppercase; color:rgba(245,240,232,0.65); border:1px solid rgba(245,240,232,0.2); padding:2px 6px; border-radius:2px; }
-
-    .card-arrow { position:absolute; top:1.1rem; right:1.25rem; font-family:var(--body); font-size:0.62rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:rgba(245,240,232,0.75); opacity:0; transform:translateX(-5px); transition:opacity 0.25s,transform 0.25s; }
-    .proj-card:hover .card-arrow { opacity:1; transform:translateX(0); }
-
-    .filter-rail { padding:2.5rem 1.75rem; position:sticky; top:5rem; opacity:0; animation:fadeUp 0.7s 0.3s ease forwards; }
-    .filter-heading { font-family:var(--sans-ui); font-size:0.6rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--orange); margin-bottom:0.85rem; padding-bottom:0.5rem; border-bottom:1px solid rgba(201,74,18,0.2); }
-    .filter-list { list-style:none; display:flex; flex-direction:column; gap:0.1rem; }
-    .filter-btn { font-family:var(--sans-ui); font-size:0.72rem; color:var(--ink-mid); background:none; border:none; padding:0.4rem 0.6rem; text-align:left; cursor:pointer; border-radius:3px; transition:background 0.15s,color 0.15s; width:100%; }
-    .filter-btn:hover  { background:rgba(201,74,18,0.08); color:var(--orange); }
-    .filter-btn.active { color:var(--orange); font-weight:500; background:rgba(201,74,18,0.1); }
-    .filter-count { font-family:var(--mono); font-size:0.55rem; color:var(--ink-light); margin-top:1.25rem; letter-spacing:0.1em; }
-
-    footer { position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; padding:1.75rem 3rem; border-top:1px solid var(--border); gap:1rem; flex-wrap:wrap; background:var(--bg-alt); }
-    footer a { font-family:var(--body); font-size:0.8rem; color:var(--orange); text-decoration:none; }
-    footer p { font-family:var(--mono); font-size:0.62rem; color:var(--ink-light); letter-spacing:0.08em; }
-
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-
-    @media (max-width:1000px) {
-      nav { padding:1.25rem 1.5rem; }
-      .page-header { padding:6rem 1.5rem 2rem; }
-      .work-layout { grid-template-columns:1fr; }
-      .grid-area { padding:2rem 1.5rem 5rem; border-right:none; }
-      .filter-rail { position:static; padding:1.25rem 1.5rem; border-top:1px solid var(--border); }
-      .filter-list { flex-direction:row; flex-wrap:wrap; gap:0.35rem; }
-      .filter-btn { padding:0.3rem 0.7rem; border:1px solid var(--border); border-radius:20px; width:auto; }
-      footer { padding:1.5rem; }
-    }
-    @media (max-width:600px) {
-      #proj-grid { grid-template-columns:1fr; }
-      .proj-card.featured { grid-column:1; aspect-ratio:4/3; }
-    }
-  </style>
+  @media(max-width:900px){
+    nav{padding:0 24px;}
+    .work-hero,.work-content{padding:40px 24px;}
+    .next-project{padding:48px 24px;}
+    footer{padding:20px 24px;flex-direction:column;gap:8px;text-align:center;}
+    .collaterals-grid{grid-template-columns:1fr;}
+  }
+</style>
 </head>
 <body>
 
-  <nav>
-    <a href="index.html" class="nav-logo">Matthew Ho</a>
-    <ul class="nav-links">
-      <li><a href="index.html">About</a></li>
-      <li><a href="work.html" class="active">Work</a></li>
-      <li>
-        <a href="https://www.linkedin.com/in/matthew-ho-4947016a/" target="_blank" rel="noopener" class="li-icon" aria-label="LinkedIn">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-          </svg>
-        </a>
-      </li>
-    </ul>
-  </nav>
+<nav>
+  <a href="index.html" class="nav-logo">Matthew Ho<span>.</span></a>
+  <a href="index.html#work" class="nav-back">All Work</a>
+</nav>
 
-  <header class="page-header">
-    <h1 class="page-title">Selected <em>Works.</em></h1>
-  </header>
+<div id="page-root"></div>
 
-  <div class="work-layout">
-    <main class="grid-area">
-      <div id="proj-grid"></div>
-    </main>
-    <aside class="filter-rail">
-      <p class="filter-heading">Filter</p>
-      <ul class="filter-list" id="filter-list">
-        <li><button class="filter-btn active" data-filter="all">All</button></li>
-      </ul>
-      <p class="filter-count" id="filter-count"></p>
-    </aside>
-  </div>
+<footer>
+  <span class="footer-logo">Matthew Ho<span>.</span></span>
+  <span id="footer-contact"></span>
+  <span id="footer-year"></span>
+</footer>
 
-  <footer>
-    <a href="mailto:matthewhzm@gmail.com">matthewhzm@gmail.com</a>
-    <p>&copy; <span class="footer-year"></span> Matthew Ho</p>
-  </footer>
+<script src="data.js"></script>
+<script>
+const D = PORTFOLIO_DATA;
+const params = new URLSearchParams(window.location.search);
+const id = params.get('id');
+const idx = D.projects.findIndex(p => p.id === id);
+const project = D.projects[idx];
+const root = document.getElementById('page-root');
 
-  <script>
-    document.querySelectorAll(".footer-year").forEach(el => el.textContent = new Date().getFullYear());
+document.getElementById('footer-contact').textContent = D.email;
+document.getElementById('footer-year').textContent = '© ' + new Date().getFullYear();
 
-function esc(s) { return String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+if (!project) {
+  root.innerHTML = `<div class="not-found" style="margin-top:72px"><h2>Project not found<span style="color:var(--orange)">.</span></h2><a href="index.html#work">← Back to all work</a></div>`;
+} else {
+  document.title = project.title + ' — Matthew Ho';
 
-    let allProjects = [], activeFilter = "all";
-
-    function renderGrid(projects) {
-      const grid = document.getElementById("proj-grid");
-      const visible = activeFilter === "all" ? projects : projects.filter(p => (p.tags||[]).includes(activeFilter));
-      document.getElementById("filter-count").textContent = visible.length + " project" + (visible.length !== 1 ? "s" : "");
-      grid.innerHTML = "";
-      visible.forEach((p, i) => {
-        const isFeatured = p.featured && i < 4;
-        const brandLine  = [p.brand, p.agency].filter(Boolean).join(" · ");
-        const firstImg   = (p.assets||[]).find(a => a.type === "image");
-        const heroImg    = (p.hero && p.hero.image) || (firstImg && firstImg.url) || "";
-        const tags       = (p.tags||[]).map(t => "<span class=\"card-tag\">" + esc(t) + "</span>").join("");
-        const award      = p.award ? "<span class=\"card-award " + esc(p.awardType) + "\">" + esc(p.award) + "</span>" : "";
-        const initial    = ((p.brand || p.title || "")).substring(0,1).toUpperCase();
-        const a          = document.createElement("a");
-        a.href           = "project.html?id=" + esc(p.id);
-        a.className      = "proj-card" + (isFeatured ? " featured" : "");
-        a.style.animationDelay = (0.08 + i * 0.05) + "s";
-        const imgHTML    = heroImg
-          ? "<div class=\"card-img\"><img src=\"" + esc(heroImg) + "\" alt=\"" + esc(p.title) + "\" loading=\"lazy\" /></div>"
-          : "<div class=\"card-img no-img\" data-brand=\"" + esc(initial) + "\"></div>";
-        a.innerHTML = imgHTML +
-          "<div class=\"card-info\"><div class=\"card-meta\"><span class=\"card-brand\">" + esc(brandLine) + "</span>" +
-          "<span class=\"card-year\">" + esc((p.intro && p.intro.year) || "") + "</span>" + award + "</div>" +
-          "<h2 class=\"card-title\">" + esc(p.title) + "</h2>" +
-          "<div class=\"card-tags\">" + tags + "</div></div>" +
-          "<span class=\"card-arrow\">View &rarr;</span>";
-        grid.appendChild(a);
-      });
-      if (!visible.length) grid.innerHTML = "<p style=\"grid-column:1/-1;padding:3rem 0;color:var(--ink-mid);font-size:0.85rem;\">No projects match this filter.</p>";
+  // Build video embed
+  let videoHTML = '';
+  if (project.videoUrl) {
+    let embedSrc = '';
+    if (project.videoType === 'youtube') {
+      const ytId = extractYouTubeId(project.videoUrl);
+      if (ytId) embedSrc = `https://www.youtube.com/embed/${ytId}?rel=0&modestbranding=1`;
+    } else if (project.videoType === 'vimeo') {
+      const vmId = project.videoUrl.match(/vimeo\.com\/(\d+)/);
+      if (vmId) embedSrc = `https://player.vimeo.com/video/${vmId[1]}?byline=0&portrait=0&title=0`;
     }
-
-    function buildFilters(projects) {
-      const tags = new Set();
-      projects.forEach(p => (p.tags||[]).forEach(t => tags.add(t)));
-      const ul = document.getElementById("filter-list");
-      tags.forEach(tag => {
-        const li = document.createElement("li");
-        const btn = document.createElement("button");
-        btn.className = "filter-btn"; btn.dataset.filter = tag; btn.textContent = tag;
-        btn.addEventListener("click", () => {
-          ul.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-          btn.classList.add("active"); activeFilter = tag; renderGrid(allProjects);
-        });
-        li.appendChild(btn); ul.appendChild(li);
-      });
-      ul.querySelector("[data-filter=\"all\"]").addEventListener("click", function() {
-        ul.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
-        this.classList.add("active"); activeFilter = "all"; renderGrid(allProjects);
-      });
+    if (embedSrc) {
+      videoHTML = `<div class="video-block">
+        <p class="video-label">Campaign Video</p>
+        <div class="video-wrap"><iframe src="${embedSrc}" allowfullscreen loading="lazy"></iframe></div>
+        ${project.videoCaption ? `<p class="video-caption">${project.videoCaption}</p>` : ''}
+      </div>`;
+    } else if (project.videoType === 'file') {
+      videoHTML = `<div class="video-block">
+        <p class="video-label">Campaign Video</p>
+        <div class="video-wrap"><video src="${project.videoUrl}" controls playsinline></video></div>
+      </div>`;
     }
+  }
 
-    async function load() {
-      try { allProjects = await (await fetch("projects.json")).json(); } catch { allProjects = []; }
-      buildFilters(allProjects); renderGrid(allProjects);
-    }
-    load();
-  </script>
+  // Build collaterals
+  let colHTML = '';
+  const cols = (project.collaterals || []).filter(c => c.url);
+  if (cols.length) {
+    colHTML = `<div class="collaterals-block">
+      <p class="collaterals-label">Campaign Collaterals</p>
+      <div class="collaterals-grid">
+        ${cols.map(c => {
+          const orient = c.orientation || 'landscape';
+          if (c.type === 'image') {
+            return `<div><div class="collateral-item ${orient}"><img src="${c.url}" alt="${c.caption||''}" loading="lazy"></div>${c.caption?`<p class="col-caption">${c.caption}</p>`:''}</div>`;
+          } else if (c.type === 'gif') {
+            return `<div><div class="collateral-item ${orient}"><img src="${c.url}" alt="${c.caption||''}" loading="lazy"></div>${c.caption?`<p class="col-caption">${c.caption}</p>`:''}</div>`;
+          } else if (c.type === 'video') {
+            return `<div><div class="collateral-item ${orient}"><video src="${c.url}" autoplay muted loop playsinline></video></div>${c.caption?`<p class="col-caption">${c.caption}</p>`:''}</div>`;
+          }
+          return '';
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  // Next project
+  const nextProject = D.projects[(idx + 1) % D.projects.length];
+  const nextHTML = `<div class="next-project">
+    <p class="next-label">Next Project</p>
+    <a class="next-link" href="work.html?id=${nextProject.id}">
+      <span class="next-title">${nextProject.title}</span>
+      <span class="next-arrow">→</span>
+    </a>
+  </div>`;
+
+  root.innerHTML = `
+    <div class="work-hero">
+      <div class="work-meta">
+        <span class="work-brand">${project.brand}</span>
+        ${project.award ? `<span class="work-award-pill">${project.award}</span>` : ''}
+      </div>
+      <h1 class="work-title">${project.title}</h1>
+      <p class="work-subtitle">${project.subtitle}</p>
+      <div class="work-tags">${project.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+    </div>
+    <div class="work-content">
+      <div class="desc-block">
+        <p class="desc-text">${project.fullDescription}</p>
+      </div>
+      ${videoHTML}
+      ${colHTML}
+    </div>
+    ${nextHTML}`;
+}
+
+function extractYouTubeId(url) {
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+</script>
 </body>
 </html>
