@@ -90,12 +90,13 @@ nav.scrolled{
 }
 .sec-eyebrow em{color:var(--red);font-style:normal;margin-right:10px}
 
-/* ── GRID: CSS grid — row-first (left→right, top→bottom) ── */
+/* ── GRID: CSS grid — row-first (left→right, top→bottom), natural card heights ── */
 .project-grid{
   padding:0 var(--pad);
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:var(--card-gap);
+  align-items:start;
 }
 
 /* ── CARD ──
