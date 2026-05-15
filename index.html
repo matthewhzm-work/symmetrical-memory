@@ -54,17 +54,17 @@ nav.scrolled{
   white-space:nowrap;overflow:hidden;
 }
 .nav-meta-main{
-  font-family:var(--display);font-size:12px;letter-spacing:0.01em;
+  font-family:var(--display);font-size:14px;letter-spacing:0.01em;
   color:#333;font-weight:400;
   flex-shrink:1;overflow:hidden;text-overflow:ellipsis;
   white-space:nowrap;
 }
 .nav-meta-sep{
-  font-family:var(--display);font-size:12px;color:#bbb;
+  font-family:var(--display);font-size:14px;color:#bbb;
   padding:0 10px;flex-shrink:0;
 }
 .nav-meta-awards{
-  font-family:var(--display);font-size:12px;letter-spacing:0.01em;
+  font-family:var(--display);font-size:14px;letter-spacing:0.01em;
   color:var(--red);font-weight:400;
   flex-shrink:0;white-space:nowrap;
 }
@@ -260,13 +260,15 @@ nav.scrolled{
 /* ── FOOTER ── */
 footer{
   background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);
-  padding:22px var(--pad);
+  padding:24px var(--pad);
   display:flex;align-items:center;justify-content:space-between;gap:16px;
-  font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;
-  color:rgba(255,255,255,0.28);
+  font-family:var(--mono);font-size:13px;letter-spacing:0.04em;
+  color:rgba(255,255,255,0.6);
 }
-.footer-name{font-family:var(--display);font-size:15px;font-weight:600;color:rgba(255,255,255,0.82);letter-spacing:-0.01em}
-.footer-name em{color:var(--red);font-style:normal}
+.footer-linkedin{color:rgba(255,255,255,0.55);transition:color 0.2s;flex-shrink:0;display:flex;align-items:center}
+.footer-linkedin:hover{color:var(--red)}
+.footer-email{color:rgba(255,255,255,0.6);text-decoration:none;transition:color 0.2s}
+.footer-email:hover{color:rgba(255,255,255,0.9)}
 
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(20px);transition:opacity 0.65s ease,transform 0.65s ease}
@@ -294,7 +296,7 @@ footer{
   .awards-cols{grid-template-columns:1fr}
   .award-row{grid-template-columns:80px 1fr}
   .award-brand{display:none}
-  footer{flex-direction:column;gap:6px;text-align:center}
+  footer{flex-direction:column;gap:10px;text-align:center;align-items:center}
 }
 @media(max-width:600px){
   .project-grid{columns:1}
@@ -346,8 +348,10 @@ footer{
 </section>
 
 <footer>
-  <span class="footer-name">Matthew Ho <em>—</em></span>
-  <span id="footer-mid"></span>
+  <a id="footer-li" href="#" target="_blank" rel="noopener" class="footer-linkedin" aria-label="LinkedIn">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+  </a>
+  <a id="footer-mid" class="footer-email"></a>
   <span id="footer-year"></span>
 </footer>
 
@@ -361,8 +365,11 @@ footer{
 
   $('nav-main').textContent   = D.title + '  ·  ' + D.tagline;
   $('nav-awards').textContent = D.awardStrip;
-  $('footer-mid').textContent = D.email;
-  $('footer-year').textContent= '© ' + new Date().getFullYear();
+  const fm = $('footer-mid');
+  fm.href = 'mailto:' + D.email;
+  fm.textContent = D.email;
+  $('footer-year').textContent = '© ' + new Date().getFullYear();
+  const fli = $('footer-li'); if(fli && D.linkedin) fli.href = D.linkedin;
 
   window.addEventListener('scroll', () => {
     $('main-nav').classList.toggle('scrolled', window.scrollY > 20);
@@ -379,12 +386,13 @@ footer{
   });
 
   const cb = $('contact-block');
-  [{key:'Email',href:'mailto:'+D.email,val:D.email},
-   {key:'Web',  href:'https://'+D.website,val:D.website,blank:true}
+  [
+    {key:'Email',    href:'mailto:'+D.email, val:D.email},
+    {key:'LinkedIn', href:D.linkedin||'#', val:'linkedin.com/in/matthew-ho', blank:true}
   ].forEach(c => {
     const row = document.createElement('div');
     row.className = 'contact-row';
-    row.innerHTML = `<span class="contact-key">${c.key}</span><a class="contact-val" href="${c.href}"${c.blank?' target="_blank"':''}>${c.val}</a>`;
+    row.innerHTML = `<span class="contact-key">${c.key}</span><a class="contact-val" href="${c.href}"${c.blank?' target="_blank" rel="noopener"':''}>${c.val}</a>`;
     cb.appendChild(row);
   });
 

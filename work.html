@@ -226,25 +226,21 @@ img{max-width:100%;height:auto;display:block}
 .col-cap{font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--mid);margin-top:8px}
 
 /* ── PROJECT RAIL ── */
-.proj-rail{background:var(--ink);padding:32px 0 28px}
-.proj-rail-label{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);padding:0 var(--pad);margin-bottom:20px}
-.proj-rail-outer{position:relative;display:flex;align-items:center}
-.rail-btn{position:absolute;z-index:10;background:none;border:none;cursor:pointer;font-size:24px;color:rgba(255,255,255,0.4);padding:10px 16px;transition:color 0.2s}
-.rail-btn:hover{color:#fff}
-.rail-btn-prev{left:calc(var(--pad) - 16px)}
-.rail-btn-next{right:calc(var(--pad) - 16px)}
-.rail-btn.hidden{opacity:0;pointer-events:none}
-.proj-rail-scroll{overflow-x:auto;scroll-behavior:smooth;-ms-overflow-style:none;scrollbar-width:none;padding:0 var(--pad);display:flex;gap:10px;-webkit-mask:linear-gradient(to right,transparent 0%,black 60px,black calc(100% - 60px),transparent 100%);mask:linear-gradient(to right,transparent 0%,black 60px,black calc(100% - 60px),transparent 100%)}
-.proj-rail-scroll::-webkit-scrollbar{display:none}
-.rail-card{flex-shrink:0;width:140px;text-decoration:none;transition:opacity 0.2s,transform 0.2s}
-.rail-card:hover{transform:translateY(-3px)}
-.rail-card.current{opacity:0.35;pointer-events:none}
-.rail-thumb{width:140px;height:88px;overflow:hidden;background:#1a1a1a;margin-bottom:8px}
-.rail-thumb img{width:100%;height:100%;object-fit:cover}
-.rail-thumb-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
-.rail-thumb-ph span{font-family:var(--display);font-size:10px;font-weight:600;color:rgba(255,255,255,0.12);letter-spacing:0.06em;text-align:center;padding:4px}
-.rail-brand{font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:3px}
-.rail-title{font-family:var(--display);font-size:11px;font-weight:500;color:rgba(255,255,255,0.65);line-height:1.3;letter-spacing:-0.01em}
+.proj-rail{background:var(--ink);padding:56px var(--pad) 64px}
+.proj-rail-label{font-family:var(--mono);font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:36px}
+.proj-rail-inner{display:grid;grid-template-columns:3fr 2fr;gap:64px;align-items:start}
+.rail-index{columns:2;column-gap:32px;column-rule:1px solid rgba(255,255,255,0.07)}
+.rail-idx-item{display:block;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);text-decoration:none;break-inside:avoid;transition:opacity 0.18s}
+.rail-idx-item.current{opacity:0.25;pointer-events:none}
+.rail-idx-brand{display:block;font-family:var(--mono);font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.32);margin-bottom:4px;transition:color 0.18s}
+.rail-idx-title{display:block;font-family:var(--display);font-size:13px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:-0.01em;line-height:1.3;transition:color 0.18s}
+.rail-idx-item:not(.current):hover .rail-idx-brand{color:var(--red)}
+.rail-idx-item:not(.current):hover .rail-idx-title{color:#fff}
+.rail-preview-wrap{position:relative;width:100%;aspect-ratio:16/9;background:rgba(255,255,255,0.04);overflow:hidden}
+.rail-preview-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 0.3s ease}
+.rail-preview-img.active{opacity:1}
+.rail-preview-hint{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:9px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.18);pointer-events:none;transition:opacity 0.3s}
+.rail-preview-wrap.has-preview .rail-preview-hint{opacity:0}
 
 /* ── FOOTER ── */
 footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding:22px var(--pad);display:flex;align-items:center;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.28)}
@@ -300,8 +296,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
   .ma-writeup-2col{grid-template-columns:1fr}
   .ma-thumb-row{display:grid;grid-template-columns:repeat(3,1fr);overflow-x:visible;gap:6px}
   .ma-thumb-item{width:100%;height:auto;aspect-ratio:3/2}
-  .rail-btn{display:none}
-  .proj-rail-scroll{-webkit-mask:none;mask:none}
+  .proj-rail-inner{grid-template-columns:1fr}
+  .rail-preview-wrap{display:none}
+  .rail-index{columns:1}
   footer{flex-direction:column;gap:6px;text-align:center}
 }
 </style>
@@ -330,10 +327,11 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
 
 <div class="proj-rail" id="proj-rail" style="display:none">
   <p class="proj-rail-label">More Work</p>
-  <div class="proj-rail-outer">
-    <button class="rail-btn rail-btn-prev hidden" id="rail-prev" onclick="doRailScroll(-1)">‹</button>
-    <div class="proj-rail-scroll" id="rail-scroll"></div>
-    <button class="rail-btn rail-btn-next" id="rail-next" onclick="doRailScroll(1)">›</button>
+  <div class="proj-rail-inner">
+    <div class="rail-index" id="rail-index"></div>
+    <div class="rail-preview-wrap" id="rail-preview-wrap">
+      <span class="rail-preview-hint">Hover to preview</span>
+    </div>
   </div>
 </div>
 
@@ -510,7 +508,14 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
     const luxPool = [...cols];
     if (P.thumbnailUrl) luxPool.splice(5, 0, {url: P.thumbnailUrl, caption: ''});
     LB_POOLS['cols'] = luxPool;
-    const [lp1,lp2,lp3] = splitHtmlThree(P.fullDescription);
+    let lp1, lp2, lp3;
+    if (P.fullDescription2) {
+      lp1 = renderHtml(P.fullDescription);
+      lp2 = renderHtml(P.fullDescription2);
+      lp3 = renderHtml(P.fullDescription3||'');
+    } else {
+      [lp1,lp2,lp3] = splitHtmlThree(P.fullDescription);
+    }
     body = mkVideos()
       + `<div class="lux-writeup-3col"><div class="rte">${lp1||'&nbsp;'}</div><div class="rte">${lp2||'&nbsp;'}</div><div class="rte">${lp3||'&nbsp;'}</div></div>`
       + mkLuxGrid('cols');
@@ -521,7 +526,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
     const thumbs = (P.thumbnails||[]).filter(t=>t.url&&t.url.trim()&&t.active!==false);
     LB_POOLS['thumbs'] = thumbs;
     const thumbItems = thumbs.map((t,i)=>`<div class="ma-thumb-item" onclick="lbOpen('thumbs',${i})"><img src="${t.url}" alt="${esc(t.caption||'')}" loading="lazy"></div>`).join('');
-    const [maCol1,maCol2] = splitHtmlCols(P.fullDescription);
+    let maCol1, maCol2;
+    if (P.fullDescription2) { maCol1 = renderHtml(P.fullDescription); maCol2 = renderHtml(P.fullDescription2); }
+    else { [maCol1,maCol2] = splitHtmlCols(P.fullDescription); }
     body = `<div class="ma-quote-section"><p class="ma-quote">${esc(P.quote||'')}</p></div>`
       + mkVideos()
       + `<div class="ma-writeup-2col"><div class="rte">${maCol1}</div>${maCol2?`<div class="rte">${maCol2}</div>`:''}</div>`
@@ -602,7 +609,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
     const mhaPrints = (P.prints||[]).filter(p=>p&&p.url);
     LB_POOLS['mhaPrints'] = mhaPrints;
     const pHTML = mhaPrints.map((p,i)=>`<div class="mha-print-item" onclick="lbOpen('mhaPrints',${i})"><img src="${p.url}" alt="${esc(p.caption||'')}" loading="lazy"></div>`).join('');
-    const [mhaCol1,mhaCol2] = splitHtmlCols(P.fullDescription);
+    let mhaCol1, mhaCol2;
+    if (P.fullDescription2) { mhaCol1 = renderHtml(P.fullDescription); mhaCol2 = renderHtml(P.fullDescription2); }
+    else { [mhaCol1,mhaCol2] = splitHtmlCols(P.fullDescription); }
     body = `<div class="ma-writeup-2col"><div class="rte">${mhaCol1}</div>${mhaCol2?`<div class="rte">${mhaCol2}</div>`:''}</div>`
       + mkVideos()
       + `<div class="mha-prints-row">${pHTML}</div>`;
@@ -670,7 +679,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
     const socialRow = social.map(v=>`<div class="vivo-social-item"><p>${esc(v.caption||'')}</p>${vid4x5(v)}</div>`).join('');
     const pubgRow   = pubgRest.map(v=>`<div class="vivo-2pubg-item"><p>${esc(v.caption||'')}</p>${vid16x9(v)}</div>`).join('');
 
-    const [wc1,wc2] = splitHtmlCols(P.fullDescription);
+    let wc1, wc2;
+    if (P.fullDescription2) { wc1 = renderHtml(P.fullDescription); wc2 = renderHtml(P.fullDescription2); }
+    else { [wc1,wc2] = splitHtmlCols(P.fullDescription); }
 
     const pubg1S = pubg1 ? src(pubg1) : null;
 
@@ -705,7 +716,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
     LB_POOLS['ofnoahMix'] = mixPool;
     LB_POOLS['ofnoahLast'] = lastPool;
 
-    const [col1,col2] = splitHtmlCols(P.fullDescription);
+    let col1, col2;
+    if (P.fullDescription2) { col1 = renderHtml(P.fullDescription); col2 = renderHtml(P.fullDescription2); }
+    else { [col1,col2] = splitHtmlCols(P.fullDescription); }
 
     const sqHTML = sqPool.map((s,i)=>`<img src="${s.url}" loading="lazy" onclick="lbOpen('ofnoahSq',${i})">`).join('');
 
@@ -796,35 +809,41 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
   });
 
   function buildRail(){
-    const rail=$('proj-rail'), railEl=$('rail-scroll');
-    if(!rail||!railEl) return;
-    if(activeProjects.length>1){
-      rail.style.display='block';
-      activeProjects.forEach(proj=>{
-        const isCurrent=proj.id===pid;
-        const card=document.createElement('a');
-        card.className='rail-card'+(isCurrent?' current':'');
-        card.href=isCurrent?'#':`work.html?id=${proj.id}`;
-        const thumb=proj.thumbnailUrl
-          ?`<img src="${proj.thumbnailUrl}" alt="${esc(proj.title)}" loading="lazy">`
-          :`<div class="rail-thumb-ph"><span>${esc(proj.brand)}</span></div>`;
-        card.innerHTML=`<div class="rail-thumb">${thumb}</div><div class="rail-brand">${esc(proj.brand)}</div><div class="rail-title">${esc(proj.title)}</div>`;
-        railEl.appendChild(card);
-      });
-      requestAnimationFrame(()=>{
-        const cur=railEl.querySelector('.current');
-        if(cur) railEl.scrollLeft=cur.offsetLeft-(railEl.clientWidth/2)+(cur.clientWidth/2);
-        updateRailBtns();
-      });
-      railEl.addEventListener('scroll',updateRailBtns,{passive:true});
-    }
-    function updateRailBtns(){
-      const s=railEl;
-      $('rail-prev').classList.toggle('hidden',s.scrollLeft<10);
-      $('rail-next').classList.toggle('hidden',s.scrollLeft>=s.scrollWidth-s.clientWidth-10);
-    }
+    const rail=$('proj-rail'), idxEl=$('rail-index'), previewWrap=$('rail-preview-wrap');
+    if(!rail||!idxEl) return;
+    if(activeProjects.length<2){rail.style.display='none';return;}
+    rail.style.display='block';
+    idxEl.innerHTML='';
+    if(previewWrap) previewWrap.querySelectorAll('.rail-preview-img').forEach(i=>i.remove());
+
+    activeProjects.forEach(proj=>{
+      const isCurrent=proj.id===pid;
+
+      // Text index row
+      const item=document.createElement(isCurrent?'span':'a');
+      item.className='rail-idx-item'+(isCurrent?' current':'');
+      if(!isCurrent) item.href=`work.html?id=${proj.id}`;
+      item.innerHTML=`<span class="rail-idx-brand">${esc(proj.brand)}</span><span class="rail-idx-title">${esc(proj.title)}</span>`;
+      idxEl.appendChild(item);
+
+      // Stacked preview image (right panel)
+      if(previewWrap&&proj.thumbnailUrl&&proj.thumbnailUrl.trim()){
+        const img=document.createElement('img');
+        img.className='rail-preview-img';
+        img.src=proj.thumbnailUrl;
+        img.alt=esc(proj.title);
+        img.loading='lazy';
+        previewWrap.appendChild(img);
+        if(!isCurrent){
+          item.addEventListener('mouseenter',()=>{
+            previewWrap.querySelectorAll('.rail-preview-img').forEach(i=>i.classList.remove('active'));
+            img.classList.add('active');
+            previewWrap.classList.add('has-preview');
+          });
+        }
+      }
+    });
   }
-  window.doRailScroll=d=>{const r=$('rail-scroll');if(r)r.scrollLeft+=d*320;};
 })();
 </script>
 </body>

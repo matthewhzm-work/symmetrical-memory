@@ -200,16 +200,14 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
           <div class="fg"><label>Location</label><input type="text" id="p-location"></div>
           <div class="fg"><label>Email</label><input type="email" id="p-email"></div>
           <div class="fg"><label>Website (no https://)</label><input type="text" id="p-website"></div>
+          <div class="fg"><label>LinkedIn URL</label><input type="text" id="p-linkedin" placeholder="https://www.linkedin.com/in/..."></div>
           <div class="fg full"><label>Tagline (nav bar — title · tagline portion)</label><input type="text" id="p-tagline"></div>
           <div class="fg full"><label>Award Strip (nav bar — shown in red)</label><input type="text" id="p-awards"></div>
         </div>
       </div>
       <div class="card">
-        <div class="card-head">
-          <span class="card-label">Bio Paragraphs</span>
-          <button class="btn btn-secondary btn-sm" onclick="addBio()">+ Add Paragraph</button>
-        </div>
-        <div id="bio-list"></div>
+        <div class="card-head"><span class="card-label">Bio</span></div>
+        <div class="fg"><div class="rte-wrap"><div id="bio-rte"></div></div></div>
       </div>
       <div class="btn-group">
         <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
@@ -250,21 +248,16 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
               <div class="fg full"><label>Project Title</label><input type="text" id="e-title"></div>
               <div class="fg full"><label>Subtitle (project page)</label><input type="text" id="e-subtitle"></div>
               <div class="fg full"><label>Card Description (homepage card)</label><div class="rte-wrap"><div id="e-desc"></div></div></div>
-              <div class="fg full"><label>Full Description (project page write-up)</label><div class="rte-wrap"><div id="e-fulldesc"></div></div></div>
-              <div class="fg"><label>Grid Span (columns out of 12)</label>
-                <select id="e-span">
-                  <option value="7">Wide — 7/12</option>
-                  <option value="5">Narrow — 5/12</option>
-                  <option value="6">Half — 6/12</option>
-                  <option value="4">Third — 4/12</option>
-                  <option value="8">Large — 8/12</option>
-                </select>
-              </div>
+              <div class="fg full"><label>Write-up — Column 1</label><div class="rte-wrap"><div id="e-fulldesc"></div></div></div>
+              <div class="fg full" id="wrap-fulldesc2" style="display:none"><label>Write-up — Column 2</label><div class="rte-wrap"><div id="e-fulldesc2"></div></div></div>
+              <div class="fg full" id="wrap-fulldesc3" style="display:none"><label>Write-up — Column 3</label><div class="rte-wrap"><div id="e-fulldesc3"></div></div></div>
+              <div class="fg full" id="field-quote" style="display:none"><label>Opening Quote</label><input type="text" id="e-quote" placeholder="e.g. The launch of the V15…"></div>
+              <div class="fg full" id="field-openingq" style="display:none"><label>Opening Question</label><input type="text" id="e-openingq" placeholder="Campaign quiz question…"></div>
               <div class="fg"><label>Project Page Template</label>
-                <select id="e-template">
+                <select id="e-template" onchange="updateTemplateFields()">
                   <option value="default">Default — videos → write-up → collaterals</option>
                   <option value="lux">Lux — video → 3-col write-up → 2-col images</option>
-                  <option value="hsbc-mind-athletes">HSBC Mind Athletes</option>
+                  <option value="hsbc-mind-athletes">HSBC Mind Athletes — quote → video → 2-col write-up</option>
                   <option value="writeup-then-video">Write-up → Video</option>
                   <option value="writeup-left-video-right">Write-up Left / Video Right</option>
                   <option value="video-left-writeup-right">Video Left / Write-up Right</option>
@@ -272,10 +265,11 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
                   <option value="video-left-writeup-right-row3">Video L / Write-up R + 3 below</option>
                   <option value="two-videos-side-by-side">2 Videos Side-by-Side</option>
                   <option value="prints-side-by-side">Prints Side-by-Side</option>
-                  <option value="mha">MHA — write-up → video → 3 prints</option>
-                  <option value="cwyl">CWYL — question → image viewer → split</option>
-                  <option value="ofnoah">ofnoah — custom layout</option>
-                  <option value="vivo">vivo V15 — quote → blossom pink → social → PUBG</option>
+                  <option value="mha">MHA — video → 2-col write-up → 3 prints</option>
+                  <option value="cwyl">CWYL — opening question → image viewer → split</option>
+                  <option value="ofnoah">ofNoah — custom layout</option>
+                  <option value="vivo">Vivo V15 — quote → blossom pink → social → PUBG</option>
+                  <option value="vw-prints">VW Prints — write-up left · gallery right</option>
                 </select>
               </div>
               <div class="fg full"><label>Tags (comma-separated)</label><input type="text" id="e-tags" placeholder="Social, Integrated, Brand"></div>
@@ -466,11 +460,12 @@ function toast(msg, type='success'){
    NAVIGATION
 ═══════════════════════════════════════ */
 window.showSec = function(key, el){
+  /* Preserve any in-progress edits before switching sections */
+  flushAll();
   document.querySelectorAll('.cms-sec').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
   $('sec-'+key).classList.add('active');
   if(el) el.classList.add('active');
-  // Always flush DOM → S before switching away from projects editor
   ({
     profile:    renderProfile,
     projects:   ()=>{ renderList(); closeEditor(); },
@@ -482,52 +477,33 @@ window.showSec = function(key, el){
 
 /* ═══════════════════════════════════════
    PROFILE
-
-   FIX: saveProfile reads ALL fields from the DOM into S every time.
-   No reliance on oninput for the final state — DOM is the source of truth on save.
 ═══════════════════════════════════════ */
 function renderProfile(){
-  $('p-name').value     = S.name     || '';
-  $('p-title').value    = S.title    || '';
-  $('p-location').value = S.location || '';
-  $('p-email').value    = S.email    || '';
-  $('p-website').value  = S.website  || '';
-  $('p-tagline').value  = S.tagline  || '';
-  $('p-awards').value   = S.awardStrip || '';
-  renderBioList();
+  $('p-name').value     = S.name      || '';
+  $('p-title').value    = S.title     || '';
+  $('p-location').value = S.location  || '';
+  $('p-email').value    = S.email     || '';
+  $('p-website').value  = S.website   || '';
+  $('p-linkedin').value = S.linkedin  || '';
+  $('p-tagline').value  = S.tagline   || '';
+  $('p-awards').value   = S.awardStrip|| '';
+  /* Single bio RTE — join all legacy paragraphs into one block */
+  const bioHtml = Array.isArray(S.bio) ? S.bio.join('') : (S.bio||'');
+  initRTE('bio-rte', bioHtml, 'Write your bio here…');
 }
 
-function renderBioList(){
-  flushBioFromDOM();
-  $('bio-list').innerHTML=(S.bio||[]).map((p,i)=>`
-    <div style="background:var(--paper);padding:14px;margin-bottom:8px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-family:var(--mono);font-size:9px;color:var(--red);letter-spacing:0.1em;text-transform:uppercase">Paragraph ${i+1}</span>
-        <button class="btn btn-danger btn-sm" onclick="removeBio(${i})">Remove</button>
-      </div>
-      <div class="rte-wrap"><div id="bio-rte-${i}"></div></div>
-    </div>`).join('');
-  (S.bio||[]).forEach((p,i)=>initRTE('bio-rte-'+i, p, 'Bio paragraph…'));
-}
-
-window.addBio    = ()=>{ flushBioFromDOM(); S.bio.push(''); renderBioList(); };
-window.removeBio = i =>{ flushBioFromDOM(); S.bio.splice(i,1); renderBioList(); };
-
-/* Flush bio RTEs → S.bio before any operation */
 function flushBioFromDOM(){
-  (S.bio||[]).forEach((_,i)=>{
-    const h=getQuillHtml('bio-rte-'+i);
-    if(h!==undefined) S.bio[i]=h;
-  });
+  const h = getQuillHtml('bio-rte');
+  if(h !== undefined) S.bio = [h];   /* always single-element array */
 }
 
 window.saveProfile = ()=>{
-  /* Read every field directly from DOM — no reliance on oninput */
   S.name       = $('p-name').value.trim();
   S.title      = $('p-title').value.trim();
   S.location   = $('p-location').value.trim();
   S.email      = $('p-email').value.trim();
   S.website    = $('p-website').value.trim();
+  S.linkedin   = $('p-linkedin').value.trim();
   S.tagline    = $('p-tagline').value.trim();
   S.awardStrip = $('p-awards').value.trim();
   flushBioFromDOM();
@@ -583,16 +559,24 @@ window.editProject = i => {
   $('view-list').style.display   = 'none';
   $('view-editor').style.display = 'block';
   $('editor-heading').textContent = 'Editing: ' + (p.title || 'New Project');
-  /* Populate all tabs */
+  /* Basic fields */
   $('e-brand').value     = p.brand           || '';
   $('e-award').value     = p.award           || '';
   $('e-title').value     = p.title           || '';
   $('e-subtitle').value  = p.subtitle        || '';
-  initRTE('e-desc',     p.description     || '', 'Short description shown on the homepage card…');
-  initRTE('e-fulldesc', p.fullDescription || '', 'Full write-up shown on the project page…');
-  $('e-span').value      = String(p.gridSpan || 6);
   $('e-template').value  = p.projectTemplate || 'default';
   $('e-tags').value      = (p.tags||[]).join(', ');
+  /* Write-up RTEs — always init all three; show/hide handled by updateTemplateFields */
+  initRTE('e-desc',      p.description      || '', 'Short description shown on the homepage card…');
+  initRTE('e-fulldesc',  p.fullDescription  || '', 'Write-up — column 1…');
+  initRTE('e-fulldesc2', p.fullDescription2 || '', 'Write-up — column 2…');
+  initRTE('e-fulldesc3', p.fullDescription3 || '', 'Write-up — column 3…');
+  /* Template-specific text fields */
+  $('e-quote').value     = p.quote           || '';
+  $('e-openingq').value  = p.openingQuestion || '';
+  /* Show/hide extra fields based on template */
+  updateTemplateFields();
+  /* Thumbnail tab */
   $('e-thumburl').value  = p.thumbnailUrl    || '';
   $('e-thumbtype').value = p.thumbnailType   || 'image';
   const col = p.placeholderColor || '#111111';
@@ -604,59 +588,82 @@ window.editProject = i => {
   switchTab('basic', $('tbb-basic'));
 };
 
+/* Show/hide write-up columns and template-specific fields based on template */
+const TEMPLATE_COLS = { 'lux':3, 'hsbc-mind-athletes':2, 'mha':2, 'ofnoah':2, 'vivo':2 };
+const TEMPLATE_QUOTE    = ['vivo','hsbc-mind-athletes'];
+const TEMPLATE_OPENINGQ = ['cwyl'];
+window.updateTemplateFields = function(){
+  const tmpl = ($('e-template')||{}).value || '';
+  const cols  = TEMPLATE_COLS[tmpl] || 1;
+  const w2 = $('wrap-fulldesc2'), w3 = $('wrap-fulldesc3');
+  const fq = $('field-quote'),    fo = $('field-openingq');
+  if(w2) w2.style.display = cols >= 2 ? 'block' : 'none';
+  if(w3) w3.style.display = cols >= 3 ? 'block' : 'none';
+  if(fq) fq.style.display = TEMPLATE_QUOTE.includes(tmpl)    ? 'block' : 'none';
+  if(fo) fo.style.display = TEMPLATE_OPENINGQ.includes(tmpl) ? 'block' : 'none';
+};
+
 window.closeEditor = ()=>{
   $('view-editor').style.display = 'none';
   $('view-list').style.display   = 'block';
   renderList();
 };
 
-window.saveProject = ()=>{
-  if(editIdx < 0){ toast('No project selected.','error'); return; }
+/* Read the current project editor state into S.projects[editIdx] */
+function flushProjectFromDOM(){
+  if(editIdx < 0) return;
   const p = S.projects[editIdx];
-  /* Read directly from every DOM field */
-  p.brand           = $('e-brand').value.trim();
-  p.award           = $('e-award').value.trim();
-  p.title           = $('e-title').value.trim();
-  p.subtitle        = $('e-subtitle').value.trim();
-  p.description     = getQuillHtml('e-desc');
-  p.fullDescription = getQuillHtml('e-fulldesc');
-  p.gridSpan        = parseInt($('e-span').value) || 6;
-  p.projectTemplate = $('e-template').value;
-  p.tags            = $('e-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
-  p.thumbnailUrl    = $('e-thumburl').value.trim();
-  p.thumbnailType   = $('e-thumbtype').value;
-  p.placeholderColor= $('e-color').value.trim() || '#111111';
-  // Flush thumbnails from DOM
-  flushThumbsFromDOM();
-  // Collect videos from DOM
-  p.videos = [];
-  document.querySelectorAll('#videos-list .vid-row').forEach(row => {
-    const url = row.querySelector('.vid-url').value.trim();
-    if (url) {
-      p.videos.push({
-        url,
-        type:    row.querySelector('.vid-type').value,
-        caption: row.querySelector('.vid-cap-inp').value.trim()
-      });
-    }
-  });
-  /* Collaterals: read from DOM rows */
-  p.collaterals = [];
-  document.querySelectorAll('#cols-list .col-row').forEach(row => {
-    p.collaterals.push({
-      type:        row.querySelector('.col-type').value,
-      url:         row.querySelector('.col-url').value.trim(),
-      caption:     row.querySelector('.col-cap-inp').value.trim(),
-      orientation: row.querySelector('.col-orient').value
+  p.brand            = $('e-brand').value.trim();
+  p.award            = $('e-award').value.trim();
+  p.title            = $('e-title').value.trim();
+  p.subtitle         = $('e-subtitle').value.trim();
+  p.description      = getQuillHtml('e-desc');
+  p.fullDescription  = getQuillHtml('e-fulldesc');
+  p.fullDescription2 = getQuillHtml('e-fulldesc2');
+  p.fullDescription3 = getQuillHtml('e-fulldesc3');
+  p.projectTemplate  = $('e-template').value;
+  p.quote            = $('e-quote').value.trim();
+  p.openingQuestion  = $('e-openingq').value.trim();
+  p.tags             = $('e-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
+  p.thumbnailUrl     = $('e-thumburl').value.trim();
+  p.thumbnailType    = $('e-thumbtype').value;
+  p.placeholderColor = $('e-color').value.trim() || '#111111';
+  /* Videos */
+  const vidRows = document.querySelectorAll('#videos-list .vid-row');
+  if(vidRows.length || p.videos){
+    p.videos = [];
+    vidRows.forEach(row=>{
+      const url = row.querySelector('.vid-url').value.trim();
+      if(url) p.videos.push({url, type:row.querySelector('.vid-type').value, caption:row.querySelector('.vid-cap-inp').value.trim()});
     });
-  });
-  /* Auto-generate slug id if still placeholder */
+  }
+  /* Collaterals */
+  const colRows = document.querySelectorAll('#cols-list .col-row');
+  if(colRows.length || p.collaterals){
+    p.collaterals = [];
+    colRows.forEach(row=>{
+      p.collaterals.push({
+        type:        row.querySelector('.col-type').value,
+        url:         row.querySelector('.col-url').value.trim(),
+        caption:     row.querySelector('.col-cap-inp').value.trim(),
+        orientation: row.querySelector('.col-orient').value
+      });
+    });
+  }
+  /* Thumbnails */
+  flushThumbsFromDOM();
+  /* Auto-slug */
   if(!p.id || p.id.startsWith('project-')){
     const slug = p.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
     if(slug) p.id = slug;
   }
-  $('editor-heading').textContent = 'Editing: ' + p.title;
-  toast('Project "' + p.title + '" saved — generate data.js to publish.');
+}
+
+window.saveProject = ()=>{
+  if(editIdx < 0){ toast('No project selected.','error'); return; }
+  flushProjectFromDOM();
+  $('editor-heading').textContent = 'Editing: ' + S.projects[editIdx].title;
+  toast('Project "' + S.projects[editIdx].title + '" saved — generate data.js to publish.');
 };
 
 window.deleteProject = ()=>{
@@ -900,6 +907,26 @@ window.saveAwards = ()=>{
 };
 
 /* ═══════════════════════════════════════
+   FLUSH ALL — call before export or section switch
+   Reads every visible DOM field back into S so nothing is lost.
+═══════════════════════════════════════ */
+function flushAll(){
+  /* Profile identity */
+  if($('p-name'))     S.name       = $('p-name').value.trim();
+  if($('p-title'))    S.title      = $('p-title').value.trim();
+  if($('p-location')) S.location   = $('p-location').value.trim();
+  if($('p-email'))    S.email      = $('p-email').value.trim();
+  if($('p-website'))  S.website    = $('p-website').value.trim();
+  if($('p-linkedin')) S.linkedin   = $('p-linkedin').value.trim();
+  if($('p-tagline'))  S.tagline    = $('p-tagline').value.trim();
+  if($('p-awards'))   S.awardStrip = $('p-awards').value.trim();
+  flushBioFromDOM();
+  flushExpFromDOM();
+  flushAwardsFromDOM();
+  if(editIdx >= 0) flushProjectFromDOM();
+}
+
+/* ═══════════════════════════════════════
    EXPORT + DOWNLOAD
 ═══════════════════════════════════════ */
 function buildOutput(){
@@ -908,6 +935,7 @@ function buildOutput(){
 }
 
 window.doExport = ()=>{
+  flushAll();
   $('export-out').textContent = buildOutput();
 };
 
@@ -920,6 +948,7 @@ window.copyExport = ()=>{
 };
 
 window.downloadExport = ()=>{
+  flushAll();
   const txt = buildOutput();
   const blob = new Blob([txt], {type:'text/javascript'});
   const url  = URL.createObjectURL(blob);

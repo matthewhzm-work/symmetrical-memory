@@ -4,6 +4,7 @@ const PORTFOLIO_DATA = {
   "location": "Singapore",
   "email": "matthewhzm@gmail.com",
   "website": "matthewho.work",
+  "linkedin": "https://www.linkedin.com/in/matthew-ho-4947016a/",
   "tagline": "Copywriter · Strategist · Campaign Lead",
   "awardStrip": "Cannes · D&AD · Epica · One Show",
   "bio": [
