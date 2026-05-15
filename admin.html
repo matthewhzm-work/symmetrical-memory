@@ -517,7 +517,7 @@ window.removeBio = i =>{ flushBioFromDOM(); S.bio.splice(i,1); renderBioList(); 
 function flushBioFromDOM(){
   (S.bio||[]).forEach((_,i)=>{
     const h=getQuillHtml('bio-rte-'+i);
-    if(h!==undefined && h!=='') S.bio[i]=h;
+    if(h!==undefined) S.bio[i]=h;
   });
 }
 
@@ -545,7 +545,7 @@ function renderList(){
       <div class="list-item">
         <div class="li-main">
           <div class="li-title">${esc(p.title)}</div>
-          <div class="li-sub">${esc(p.brand)} · ${p.projectTemplate||'film'} · ${(p.collaterals||[]).length} collateral(s)${p.videoUrl?' · video':''}</div>
+          <div class="li-sub">${esc(p.brand)} · ${p.projectTemplate||'default'} · ${(p.collaterals||[]).length} collateral(s)${(p.videos&&p.videos.length)?' · '+p.videos.length+' video(s)':''}</div>
         </div>
         ${p.award ? `<span class="li-badge">${esc(p.award)}</span>` : ''}
         <button class="btn btn-secondary btn-sm" onclick="toggleActive(${i})" style="background:${p.active===false?'#555':'#1a7a3a'};color:#fff;border:none" title="${p.active===false?'Hidden — click to show':'Visible — click to hide'}">${p.active===false?'Hidden':'Live'}</button>
@@ -570,9 +570,9 @@ window.addProject = ()=>{
   S.projects.push({
     id:'project-'+Date.now(), brand:'', title:'New Project', subtitle:'', award:'',
     tags:[], placeholderColor:'#111111', gridSpan:6,
-    thumbnailUrl:'', thumbnailType:'image', projectTemplate:'film',
+    thumbnailUrl:'', thumbnailType:'image', projectTemplate:'default',
     description:'', fullDescription:'',
-    videoUrl:'', videoType:'youtube', videoCaption:'', collaterals:[]
+    videos:[], collaterals:[]
   });
   editProject(S.projects.length-1);
 };

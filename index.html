@@ -274,6 +274,8 @@ footer{
 /* ── REVEAL ── */
 .reveal{opacity:0;transform:translateY(20px);transition:opacity 0.65s ease,transform 0.65s ease}
 .reveal.visible{opacity:1;transform:translateY(0)}
+/* Card lift — needs higher specificity than .reveal.visible (0,2,0) to win */
+.project-card.visible:hover{transform:translateY(-8px);transition:transform 0.4s cubic-bezier(0.22,1,0.36,1)}
 
 /* ── RESPONSIVE ── */
 @media(max-width:900px){
@@ -357,6 +359,7 @@ footer{
 (function(){
   const D = PORTFOLIO_DATA;
   const $ = id => document.getElementById(id);
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   function renderHtml(s){if(!s)return'';if(!/</.test(s))return'<p>'+String(s).replace(/\n\n+/g,'</p><p>').replace(/\n/g,'<br>')+'</p>';return String(s);}
 
   $('nav-main').textContent   = D.title + '  ·  ' + D.tagline;
@@ -391,7 +394,7 @@ footer{
   D.experience.forEach(e => {
     const item = document.createElement('div');
     item.className = 'exp-item';
-    item.innerHTML = `<div class="exp-top"><span class="exp-co">${e.company}</span><span class="exp-period">${e.period}</span></div><div class="exp-role">${e.role}</div><div class="exp-clients">${e.clients}</div>`;
+    item.innerHTML = `<div class="exp-top"><span class="exp-co">${esc(e.company)}</span><span class="exp-period">${esc(e.period)}</span></div><div class="exp-role">${esc(e.role)}</div><div class="exp-clients">${esc(e.clients)}</div>`;
     $('exp-list').appendChild(item);
   });
 
@@ -418,7 +421,7 @@ footer{
     card.className = 'project-card reveal';
     card.href = `work.html?id=${p.id}`;
     card.style.transitionDelay = `${(i%4)*0.06}s`;
-    card.innerHTML = `<div class="card-thumb">${thumb}</div><div class="card-body"><div class="card-top"><span class="card-brand">${p.brand}</span>${p.award?`<span class="card-award">${p.award}</span>`:''}</div><div class="card-title">${p.title}</div><div class="card-desc">${p.description}</div><div class="card-tags">${(p.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div><div class="card-cta">View project <span class="cta-arr">→</span></div></div>`;
+    card.innerHTML = `<div class="card-thumb">${thumb}</div><div class="card-body"><div class="card-top"><span class="card-brand">${esc(p.brand)}</span>${p.award?`<span class="card-award">${esc(p.award)}</span>`:''}</div><div class="card-title">${esc(p.title)}</div><div class="card-desc">${renderHtml(p.description)}</div><div class="card-tags">${(p.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div><div class="card-cta">View project <span class="cta-arr">→</span></div></div>`;
 
     /* assign to lightest column; wide cards prefer col 0 */
     let ci;

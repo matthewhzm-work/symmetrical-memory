@@ -711,7 +711,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
   // After root.innerHTML set — fix CWYL img onclick (was a placeholder)
   if (tmpl === 'cwyl') {
     const img=$('cwyl-img');
-    if(img) img.onclick = ()=>lbOpen('cwylImgs',0);
+    if(img) img.onclick = ()=>lbOpen('cwylImgs',cwylCur);
   }
 
   // ── LUX/MA mobile slider ──
