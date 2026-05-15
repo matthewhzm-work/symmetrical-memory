@@ -349,7 +349,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
 
   const activeProjects = D.projects.filter(p => p.active !== false);
 
-  $('nav-main').textContent   = D.title + '  ·  ' + D.tagline;
+  $('nav-main').textContent   = D.tagline;
   $('nav-awards').textContent = D.awardStrip;
   $('f-left').textContent     = D.name + '  ·  ' + D.email;
   $('f-year').textContent     = '© ' + new Date().getFullYear();
@@ -503,10 +503,9 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
   // ── BUILD BODY ──
   let body = '';
 
-  /* LUX: video → 3-col writeup → 2-col images (thumbnail is 6th supporting image) */
+  /* LUX: video → 3-col writeup → 2-col images */
   if (tmpl === 'lux') {
     const luxPool = [...cols];
-    if (P.thumbnailUrl) luxPool.splice(5, 0, {url: P.thumbnailUrl, caption: ''});
     LB_POOLS['cols'] = luxPool;
     let lp1, lp2, lp3;
     if (P.fullDescription2) {

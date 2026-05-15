@@ -296,8 +296,8 @@ const PORTFOLIO_DATA = {
       ],
       "placeholderColor": "#1a0a12",
       "gridSpan": 7,
-      "thumbnailUrl": "images/lux-in-her-name/thumb.webp",
-      "thumbnailType": "image",
+      "thumbnailUrl": "images/lux-in-her-name/thumb.gif",
+      "thumbnailType": "gif",
       "description": "A social and influencer campaign shortlisted at Cannes Lions 2024 and awarded across Epica, Gong, London International Awards, Spikes Asia and The One Show.",
       "fullDescription": "LUX tasked us with something culturally resonant — a campaign that spoke to women beyond product benefits. In Her Name put real women's stories at the heart of the work, earning a Cannes shortlist, a Gold at Epica, and recognition across ten international shows.",
       "projectTemplate": "lux",
@@ -331,6 +331,12 @@ const PORTFOLIO_DATA = {
           "url": "images/lux-in-her-name/collateral-5.webp",
           "caption": "The Story",
           "orientation": "landscape"
+        },
+        {
+          "type": "image",
+          "url": "images/lux-in-her-name/collateral-6.webp",
+          "caption": "Campaign Execution",
+          "orientation": "landscape"
         }
       ],
       "videos": [
@@ -356,8 +362,8 @@ const PORTFOLIO_DATA = {
       ],
       "placeholderColor": "#0a1f44",
       "gridSpan": 5,
-      "thumbnailUrl": "images/hsbc-mind-athletes/thumb.webp",
-      "thumbnailType": "image",
+      "thumbnailUrl": "images/hsbc-mind-athletes/thumb.gif",
+      "thumbnailType": "gif",
       "description": "A first-of-its-kind golf experience championing inclusivity in sport. Swept the Marketing Excellence Awards across Event, Experiential, Gaming, Innovation and Sponsorship categories.",
       "fullDescription": "HSBC wanted to do something meaningful with their golf sponsorship beyond the usual tournament hospitality. Mind Athletes reframed golf as a sport of mental strength and created a first-of-its-kind experience for athletes with physical disabilities — sweeping five Gold awards at the Marketing Excellence Awards 2025.",
       "projectTemplate": "hsbc-mind-athletes",
@@ -512,8 +518,8 @@ const PORTFOLIO_DATA = {
       ],
       "placeholderColor": "#0a1f44",
       "gridSpan": 6,
-      "thumbnailUrl": "images/hsbc-better-is-never-down-to-one-thing/thumb.webp",
-      "thumbnailType": "image",
+      "thumbnailUrl": "images/hsbc-better-is-never-down-to-one-thing/thumb.gif",
+      "thumbnailType": "gif",
       "description": "<p>A brand platform for HSBC that pushed back against simple definitions of success — celebrating the idea that living better is always more nuanced than it looks.</p>",
       "fullDescription": "<p>Better Is Never Down to One Thing challenged the financial category's habit of reducing life to metrics. The platform gave HSBC a more human voice — one that acknowledged complexity, celebrated multidimensionality, and spoke to people as whole human beings rather than account holders.</p>",
       "projectTemplate": "writeup-left-video-right",
@@ -1216,7 +1222,9 @@ const PORTFOLIO_DATA = {
       "active": true
     }
   ],
-  "linkedin": "https://www.linkedin.com/in/matthew-ho-4947016a/"
+  "linkedin": "https://www.linkedin.com/in/matthew-ho-4947016a/",
+  "bioHeadline": "A strategist's brain.",
+  "bioHeadlineAccent": "A writer's instinct."
 };
 
 if (typeof module !== 'undefined') module.exports = PORTFOLIO_DATA;

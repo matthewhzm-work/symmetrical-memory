@@ -72,7 +72,12 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
 .btn-group{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
 
 /* LIST ITEMS */
-.list-item{background:var(--paper);padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.list-item{background:var(--paper);padding:13px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px;transition:opacity 0.15s}
+.list-item.drag-over{outline:2px solid var(--red);outline-offset:-2px}
+.list-item.dragging{opacity:0.45}
+.li-drag{font-size:16px;color:var(--mid);cursor:grab;padding:0 4px;user-select:none;flex-shrink:0;line-height:1}
+.li-drag:hover{color:var(--ink)}
+.li-order{font-family:var(--mono);font-size:9px;color:var(--mid);min-width:18px;text-align:right;flex-shrink:0}
 .li-main{flex:1}
 .li-title{font-weight:600;font-size:13px;margin-bottom:2px;font-family:var(--display)}
 .li-sub{font-size:11px;color:var(--mid)}
@@ -201,8 +206,10 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
           <div class="fg"><label>Email</label><input type="email" id="p-email"></div>
           <div class="fg"><label>Website (no https://)</label><input type="text" id="p-website"></div>
           <div class="fg"><label>LinkedIn URL</label><input type="text" id="p-linkedin" placeholder="https://www.linkedin.com/in/..."></div>
-          <div class="fg full"><label>Tagline (nav bar — title · tagline portion)</label><input type="text" id="p-tagline"></div>
+          <div class="fg full"><label>Tagline (nav bar)</label><input type="text" id="p-tagline"></div>
           <div class="fg full"><label>Award Strip (nav bar — shown in red)</label><input type="text" id="p-awards"></div>
+          <div class="fg full"><label>About Section Headline — Line 1</label><input type="text" id="p-bioheadline" placeholder="A strategist's brain."></div>
+          <div class="fg full"><label>About Section Headline — Line 2 (shown in red)</label><input type="text" id="p-bioheadlineaccent" placeholder="A writer's instinct."></div>
         </div>
       </div>
       <div class="card">
@@ -249,10 +256,6 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
               <div class="fg full"><label>Subtitle (project page)</label><input type="text" id="e-subtitle"></div>
               <div class="fg full"><label>Card Description (homepage card)</label><div class="rte-wrap"><div id="e-desc"></div></div></div>
               <div class="fg full"><label>Write-up — Column 1</label><div class="rte-wrap"><div id="e-fulldesc"></div></div></div>
-              <div class="fg full" id="wrap-fulldesc2" style="display:none"><label>Write-up — Column 2</label><div class="rte-wrap"><div id="e-fulldesc2"></div></div></div>
-              <div class="fg full" id="wrap-fulldesc3" style="display:none"><label>Write-up — Column 3</label><div class="rte-wrap"><div id="e-fulldesc3"></div></div></div>
-              <div class="fg full" id="field-quote" style="display:none"><label>Opening Quote</label><input type="text" id="e-quote" placeholder="e.g. The launch of the V15…"></div>
-              <div class="fg full" id="field-openingq" style="display:none"><label>Opening Question</label><input type="text" id="e-openingq" placeholder="Campaign quiz question…"></div>
               <div class="fg"><label>Project Page Template</label>
                 <select id="e-template" onchange="updateTemplateFields()">
                   <option value="default">Default — videos → write-up → collaterals</option>
@@ -273,6 +276,20 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
                 </select>
               </div>
               <div class="fg full"><label>Tags (comma-separated)</label><input type="text" id="e-tags" placeholder="Social, Integrated, Brand"></div>
+            </div>
+            <!-- Extra write-up columns and template-specific fields sit OUTSIDE the grid
+                 to prevent any overlap with grid layout or Quill toolbars -->
+            <div id="wrap-fulldesc2" style="display:none;margin-top:14px">
+              <div class="fg"><label>Write-up — Column 2</label><div class="rte-wrap"><div id="e-fulldesc2"></div></div></div>
+            </div>
+            <div id="wrap-fulldesc3" style="display:none;margin-top:14px">
+              <div class="fg"><label>Write-up — Column 3</label><div class="rte-wrap"><div id="e-fulldesc3"></div></div></div>
+            </div>
+            <div id="field-quote" style="display:none;margin-top:14px">
+              <div class="fg"><label>Opening Quote</label><input type="text" id="e-quote" placeholder="e.g. The launch of the V15…"></div>
+            </div>
+            <div id="field-openingq" style="display:none;margin-top:14px">
+              <div class="fg"><label>Opening Question</label><input type="text" id="e-openingq" placeholder="Campaign quiz question…"></div>
             </div>
           </div>
           <div id="tab-thumb" style="display:none">
@@ -479,14 +496,16 @@ window.showSec = function(key, el){
    PROFILE
 ═══════════════════════════════════════ */
 function renderProfile(){
-  $('p-name').value     = S.name      || '';
-  $('p-title').value    = S.title     || '';
-  $('p-location').value = S.location  || '';
-  $('p-email').value    = S.email     || '';
-  $('p-website').value  = S.website   || '';
-  $('p-linkedin').value = S.linkedin  || '';
-  $('p-tagline').value  = S.tagline   || '';
-  $('p-awards').value   = S.awardStrip|| '';
+  $('p-name').value            = S.name             || '';
+  $('p-title').value           = S.title            || '';
+  $('p-location').value        = S.location         || '';
+  $('p-email').value           = S.email            || '';
+  $('p-website').value         = S.website          || '';
+  $('p-linkedin').value        = S.linkedin         || '';
+  $('p-tagline').value         = S.tagline          || '';
+  $('p-awards').value          = S.awardStrip       || '';
+  $('p-bioheadline').value     = S.bioHeadline      || '';
+  $('p-bioheadlineaccent').value = S.bioHeadlineAccent || '';
   /* Single bio RTE — join all legacy paragraphs into one block */
   const bioHtml = Array.isArray(S.bio) ? S.bio.join('') : (S.bio||'');
   initRTE('bio-rte', bioHtml, 'Write your bio here…');
@@ -498,14 +517,16 @@ function flushBioFromDOM(){
 }
 
 window.saveProfile = ()=>{
-  S.name       = $('p-name').value.trim();
-  S.title      = $('p-title').value.trim();
-  S.location   = $('p-location').value.trim();
-  S.email      = $('p-email').value.trim();
-  S.website    = $('p-website').value.trim();
-  S.linkedin   = $('p-linkedin').value.trim();
-  S.tagline    = $('p-tagline').value.trim();
-  S.awardStrip = $('p-awards').value.trim();
+  S.name              = $('p-name').value.trim();
+  S.title             = $('p-title').value.trim();
+  S.location          = $('p-location').value.trim();
+  S.email             = $('p-email').value.trim();
+  S.website           = $('p-website').value.trim();
+  S.linkedin          = $('p-linkedin').value.trim();
+  S.tagline           = $('p-tagline').value.trim();
+  S.awardStrip        = $('p-awards').value.trim();
+  S.bioHeadline       = $('p-bioheadline').value.trim();
+  S.bioHeadlineAccent = $('p-bioheadlineaccent').value.trim();
   flushBioFromDOM();
   toast('Profile saved — generate data.js to publish.');
 };
@@ -513,20 +534,61 @@ window.saveProfile = ()=>{
 /* ═══════════════════════════════════════
    PROJECT LIST
 ═══════════════════════════════════════ */
+/* ── DRAG STATE ── */
+let dragSrcIdx = -1;
+
 function renderList(){
   $('proj-count').textContent = S.projects.length + ' projects';
-  $('project-list').innerHTML = !S.projects.length
-    ? '<p style="font-size:13px;color:var(--mid);padding:8px 0">No projects yet.</p>'
-    : S.projects.map((p,i) => `
-      <div class="list-item">
-        <div class="li-main">
-          <div class="li-title">${esc(p.title)}</div>
-          <div class="li-sub">${esc(p.brand)} · ${p.projectTemplate||'default'} · ${(p.collaterals||[]).length} collateral(s)${(p.videos&&p.videos.length)?' · '+p.videos.length+' video(s)':''}</div>
-        </div>
-        ${p.award ? `<span class="li-badge">${esc(p.award)}</span>` : ''}
-        <button class="btn btn-secondary btn-sm" onclick="toggleActive(${i})" style="background:${p.active===false?'#555':'#1a7a3a'};color:#fff;border:none" title="${p.active===false?'Hidden — click to show':'Visible — click to hide'}">${p.active===false?'Hidden':'Live'}</button>
-        <button class="btn btn-secondary btn-sm" onclick="editProject(${i})">Edit</button>
-      </div>`).join('');
+  const list = $('project-list');
+  if(!S.projects.length){
+    list.innerHTML = '<p style="font-size:13px;color:var(--mid);padding:8px 0">No projects yet.</p>';
+    return;
+  }
+  list.innerHTML = S.projects.map((p,i) => `
+    <div class="list-item" data-idx="${i}" draggable="true">
+      <span class="li-drag" title="Drag to reorder">⠿</span>
+      <span class="li-order" style="font-family:var(--mono);font-size:9px;color:var(--mid);min-width:18px;text-align:right">${i+1}</span>
+      <div class="li-main">
+        <div class="li-title">${esc(p.title)}</div>
+        <div class="li-sub">${esc(p.brand)} · ${p.projectTemplate||'default'} · ${(p.collaterals||[]).length} collateral(s)${(p.videos&&p.videos.length)?' · '+p.videos.length+' video(s)':''}</div>
+      </div>
+      ${p.award ? `<span class="li-badge">${esc(p.award)}</span>` : ''}
+      <button class="btn btn-secondary btn-sm" onclick="toggleActive(${i})" style="background:${p.active===false?'#555':'#1a7a3a'};color:#fff;border:none" title="${p.active===false?'Hidden — click to show':'Visible — click to hide'}">${p.active===false?'Hidden':'Live'}</button>
+      <button class="btn btn-secondary btn-sm" onclick="editProject(${i})">Edit</button>
+    </div>`).join('');
+
+  /* Wire up drag-and-drop on each item */
+  list.querySelectorAll('.list-item').forEach(el => {
+    const idx = +el.dataset.idx;
+    el.addEventListener('dragstart', e => {
+      dragSrcIdx = idx;
+      el.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    el.addEventListener('dragend', () => {
+      el.classList.remove('dragging');
+      list.querySelectorAll('.list-item').forEach(r => r.classList.remove('drag-over'));
+    });
+    el.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; });
+    el.addEventListener('dragenter', () => {
+      list.querySelectorAll('.list-item').forEach(r => r.classList.remove('drag-over'));
+      el.classList.add('drag-over');
+    });
+    el.addEventListener('dragleave', e => {
+      if(!el.contains(e.relatedTarget)) el.classList.remove('drag-over');
+    });
+    el.addEventListener('drop', e => {
+      e.preventDefault(); e.stopPropagation();
+      el.classList.remove('drag-over');
+      const dest = +el.dataset.idx;
+      if(dragSrcIdx < 0 || dragSrcIdx === dest) return;
+      const moved = S.projects.splice(dragSrcIdx, 1)[0];
+      S.projects.splice(dest, 0, moved);
+      dragSrcIdx = -1;
+      renderList();
+      toast(`"${moved.title}" → position ${dest + 1}. Export to publish.`, 'info');
+    });
+  });
 }
 
 /* ═══════════════════════════════════════
@@ -566,15 +628,13 @@ window.editProject = i => {
   $('e-subtitle').value  = p.subtitle        || '';
   $('e-template').value  = p.projectTemplate || 'default';
   $('e-tags').value      = (p.tags||[]).join(', ');
-  /* Write-up RTEs — always init all three; show/hide handled by updateTemplateFields */
-  initRTE('e-desc',      p.description      || '', 'Short description shown on the homepage card…');
-  initRTE('e-fulldesc',  p.fullDescription  || '', 'Write-up — column 1…');
-  initRTE('e-fulldesc2', p.fullDescription2 || '', 'Write-up — column 2…');
-  initRTE('e-fulldesc3', p.fullDescription3 || '', 'Write-up — column 3…');
+  /* Write-up RTEs — init col1 always; col2/col3 initialised lazily by updateTemplateFields() */
+  initRTE('e-desc',     p.description     || '', 'Short description shown on the homepage card…');
+  initRTE('e-fulldesc', p.fullDescription || '', 'Write-up — column 1…');
   /* Template-specific text fields */
   $('e-quote').value     = p.quote           || '';
   $('e-openingq').value  = p.openingQuestion || '';
-  /* Show/hide extra fields based on template */
+  /* Show/hide extra fields + lazy-init col2/col3 based on template */
   updateTemplateFields();
   /* Thumbnail tab */
   $('e-thumburl').value  = p.thumbnailUrl    || '';
@@ -597,10 +657,20 @@ window.updateTemplateFields = function(){
   const cols  = TEMPLATE_COLS[tmpl] || 1;
   const w2 = $('wrap-fulldesc2'), w3 = $('wrap-fulldesc3');
   const fq = $('field-quote'),    fo = $('field-openingq');
-  if(w2) w2.style.display = cols >= 2 ? 'block' : 'none';
-  if(w3) w3.style.display = cols >= 3 ? 'block' : 'none';
+  const show2 = cols >= 2, show3 = cols >= 3;
+  if(w2) w2.style.display = show2 ? 'block' : 'none';
+  if(w3) w3.style.display = show3 ? 'block' : 'none';
   if(fq) fq.style.display = TEMPLATE_QUOTE.includes(tmpl)    ? 'block' : 'none';
   if(fo) fo.style.display = TEMPLATE_OPENINGQ.includes(tmpl) ? 'block' : 'none';
+  /* Lazy init: only initialise RTE when its container becomes visible */
+  if(show2 && editIdx >= 0){
+    const p2 = S.projects[editIdx];
+    initRTE('e-fulldesc2', p2.fullDescription2 || '', 'Write-up — column 2…');
+  }
+  if(show3 && editIdx >= 0){
+    const p3 = S.projects[editIdx];
+    initRTE('e-fulldesc3', p3.fullDescription3 || '', 'Write-up — column 3…');
+  }
 };
 
 window.closeEditor = ()=>{
@@ -617,13 +687,17 @@ function flushProjectFromDOM(){
   p.award            = $('e-award').value.trim();
   p.title            = $('e-title').value.trim();
   p.subtitle         = $('e-subtitle').value.trim();
-  p.description      = getQuillHtml('e-desc');
-  p.fullDescription  = getQuillHtml('e-fulldesc');
-  p.fullDescription2 = getQuillHtml('e-fulldesc2');
-  p.fullDescription3 = getQuillHtml('e-fulldesc3');
-  p.projectTemplate  = $('e-template').value;
-  p.quote            = $('e-quote').value.trim();
-  p.openingQuestion  = $('e-openingq').value.trim();
+  p.description     = getQuillHtml('e-desc');
+  p.fullDescription = getQuillHtml('e-fulldesc');
+  /* Only read extra columns when their containers are visible — prevents stale content from
+     a previously-edited project contaminating a 1-col project */
+  const w2 = $('wrap-fulldesc2'), w3 = $('wrap-fulldesc3');
+  const fq = $('field-quote'),    fo = $('field-openingq');
+  if(w2 && w2.style.display !== 'none') p.fullDescription2 = getQuillHtml('e-fulldesc2');
+  if(w3 && w3.style.display !== 'none') p.fullDescription3 = getQuillHtml('e-fulldesc3');
+  p.projectTemplate = $('e-template').value;
+  if(fq && fq.style.display !== 'none') p.quote            = $('e-quote').value.trim();
+  if(fo && fo.style.display !== 'none') p.openingQuestion  = $('e-openingq').value.trim();
   p.tags             = $('e-tags').value.split(',').map(t=>t.trim()).filter(Boolean);
   p.thumbnailUrl     = $('e-thumburl').value.trim();
   p.thumbnailType    = $('e-thumbtype').value;
@@ -912,14 +986,16 @@ window.saveAwards = ()=>{
 ═══════════════════════════════════════ */
 function flushAll(){
   /* Profile identity */
-  if($('p-name'))     S.name       = $('p-name').value.trim();
-  if($('p-title'))    S.title      = $('p-title').value.trim();
-  if($('p-location')) S.location   = $('p-location').value.trim();
-  if($('p-email'))    S.email      = $('p-email').value.trim();
-  if($('p-website'))  S.website    = $('p-website').value.trim();
-  if($('p-linkedin')) S.linkedin   = $('p-linkedin').value.trim();
-  if($('p-tagline'))  S.tagline    = $('p-tagline').value.trim();
-  if($('p-awards'))   S.awardStrip = $('p-awards').value.trim();
+  if($('p-name'))              S.name             = $('p-name').value.trim();
+  if($('p-title'))             S.title            = $('p-title').value.trim();
+  if($('p-location'))          S.location         = $('p-location').value.trim();
+  if($('p-email'))             S.email            = $('p-email').value.trim();
+  if($('p-website'))           S.website          = $('p-website').value.trim();
+  if($('p-linkedin'))          S.linkedin         = $('p-linkedin').value.trim();
+  if($('p-tagline'))           S.tagline          = $('p-tagline').value.trim();
+  if($('p-awards'))            S.awardStrip       = $('p-awards').value.trim();
+  if($('p-bioheadline'))       S.bioHeadline      = $('p-bioheadline').value.trim();
+  if($('p-bioheadlineaccent')) S.bioHeadlineAccent = $('p-bioheadlineaccent').value.trim();
   flushBioFromDOM();
   flushExpFromDOM();
   flushAwardsFromDOM();

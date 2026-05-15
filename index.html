@@ -329,7 +329,7 @@ footer{
   <div class="about-grid">
     <div class="reveal">
       <p class="about-eyebrow">02 — About</p>
-      <h2 class="about-headline">A strategist's brain.<br><em>A writer's instinct.</em></h2>
+      <h2 class="about-headline" id="about-headline"></h2>
       <div id="about-bio"></div>
       <div class="contact-block" id="contact-block"></div>
     </div>
@@ -363,13 +363,17 @@ footer{
   const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   function renderHtml(s){if(!s)return'';if(!/</.test(s))return'<p>'+String(s).replace(/\n\n+/g,'</p><p>').replace(/\n/g,'<br>')+'</p>';return String(s);}
 
-  $('nav-main').textContent   = D.title + '  ·  ' + D.tagline;
+  $('nav-main').textContent   = D.tagline;
   $('nav-awards').textContent = D.awardStrip;
   const fm = $('footer-mid');
   fm.href = 'mailto:' + D.email;
   fm.textContent = D.email;
   $('footer-year').textContent = '© ' + new Date().getFullYear();
   const fli = $('footer-li'); if(fli && D.linkedin) fli.href = D.linkedin;
+
+  /* Bio headline — from data.js */
+  const ah = $('about-headline');
+  if(ah) ah.innerHTML = esc(D.bioHeadline||'') + '<br><em>' + esc(D.bioHeadlineAccent||'') + '</em>';
 
   window.addEventListener('scroll', () => {
     $('main-nav').classList.toggle('scrolled', window.scrollY > 20);
