@@ -516,6 +516,7 @@ footer{background:var(--ink);border-top:1px solid rgba(255,255,255,0.06);padding
       [lp1,lp2,lp3] = splitHtmlThree(P.fullDescription);
     }
     body = mkVideos()
+      + `<div class="ma-quote-section"><p class="ma-quote">Would you name your daughter “inferior to men”?</p></div>`
       + `<div class="lux-writeup-3col"><div class="rte">${lp1||'&nbsp;'}</div><div class="rte">${lp2||'&nbsp;'}</div><div class="rte">${lp3||'&nbsp;'}</div></div>`
       + mkLuxGrid('cols');
   }
