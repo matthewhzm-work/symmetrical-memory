@@ -157,11 +157,16 @@ nav.scrolled{
   font-weight:600;line-height:1.25;letter-spacing:-0.01em;
   margin-bottom:9px;color:var(--ink);
 }
-.card-desc{font-size:13px;font-weight:400;color:#555;line-height:1.6;margin-bottom:13px}
+.card-desc{font-size:13px;font-weight:400;color:#555;line-height:1.6;margin-bottom:14px}
+/* Quill wraps content in <p> tags whose default browser margins collapse
+   through .card-desc, pulling description text into the title above or
+   pushing it into the tags below. Zero them out so layout is predictable. */
+.card-desc p{margin:0 0 0.4em}
+.card-desc p:last-child{margin-bottom:0}
 .card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:16px}
 .tag{
   font-family:var(--mono);font-size:9px;letter-spacing:0.08em;text-transform:uppercase;
-  border:1px solid var(--light);color:#777;padding:3px 9px;
+  border:1px solid var(--light);color:#555;padding:3px 9px;
 }
 .card-cta{
   display:inline-flex;align-items:center;gap:6px;

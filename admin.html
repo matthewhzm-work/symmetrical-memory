@@ -448,7 +448,8 @@ if(sessionStorage.getItem(SK) === CORRECT){
    STATE — deep clone so we don't mutate the original constant
 ═══════════════════════════════════════ */
 let S = JSON.parse(JSON.stringify(PORTFOLIO_DATA));
-let editIdx = -1;
+let editIdx   = -1;
+let unsaved   = false;   /* tracks whether editor has pending changes since last save */
 const $ = id => document.getElementById(id);
 
 /* ── QUILL STATE ── */
@@ -644,13 +645,14 @@ window.addProject = ()=>{
     id:'project-'+Date.now(), brand:'', title:'New Project', subtitle:'', award:'',
     tags:[], placeholderColor:'#111111', gridSpan:6,
     thumbnailUrl:'', thumbnailType:'image', projectTemplate:'default',
-    description:'', blocks:[]
+    description:'', active:true, blocks:[]
   });
   editProject(S.projects.length-1);
 };
 
 window.editProject = i => {
-  editIdx = i;
+  editIdx  = i;
+  unsaved  = false;   /* reset on each open — first interaction will flip to true */
   const p = S.projects[i];
   $('view-list').style.display   = 'none';
   $('view-editor').style.display = 'block';
@@ -673,7 +675,9 @@ window.editProject = i => {
   switchTab('card', $('tbb-card'));
 };
 
-window.closeEditor = ()=>{
+window.closeEditor = () => {
+  if(unsaved && !confirm('You have unsaved changes. Go back without saving?')) return;
+  unsaved = false;
   editIdx = -1;
   $('view-editor').style.display = 'none';
   $('view-list').style.display   = 'block';
@@ -715,6 +719,7 @@ function flushProjectFromDOM(){
 window.saveProject = ()=>{
   if(editIdx < 0){ toast('No project selected.','error'); return; }
   flushProjectFromDOM();
+  unsaved = false;
   $('editor-heading').textContent = 'Editing: ' + S.projects[editIdx].title;
   toast('Project "' + S.projects[editIdx].title + '" saved — export to publish.');
 };
@@ -785,7 +790,7 @@ function blkLabel(type){
 function blkPreview(b){
   if(b.type==='video')          return b.url ? b.url.replace(/https?:\/\//,'').slice(0,50) : '—';
   if(b.type==='callout')        return b.text ? b.text.slice(0,60)+(b.text.length>60?'…':'') : '—';
-  if(b.type==='text')           return b.html ? b.html.replace(/<[^>]+>/g,'').slice(0,60)+'…' : '—';
+  if(b.type==='text')           return (b.col1||b.html) ? (b.col1||b.html).replace(/<[^>]+>/g,'').slice(0,60)+'…' : '—';
   if(b.type==='image')          return b.url ? b.url.split('/').pop() : '—';
   if(b.type==='image-row')      return `${(b.images||[]).length} image(s)`;
   if(b.type==='split')          return `${b.leftType||'text'} ← | → ${b.rightType||'video'}`;
@@ -1027,12 +1032,33 @@ function renderBlockEditorItem(b, bi, total){
   </div>`;
 }
 
-function renderBlocksEditor(){
+/* Removes stale Quill instances for the current project's text/split blocks.
+   Must be called AFTER flushBlocksFromDOM (so Quill content is captured first)
+   and BEFORE rebuilding the block editor DOM (so initColRTE/initSplitRTE create
+   fresh instances on the new nodes instead of updating detached ones). */
+function clearBlockQuillInstances(){
+  if(editIdx < 0) return;
+  (S.projects[editIdx].blocks || []).forEach(b => {
+    if(b.type === 'text')  [1,2,3].forEach(c => delete BLOCK_QUILTS['c'+c+'_'+b.id]);
+    if(b.type === 'split') ['left','right'].forEach(s  => delete BLOCK_QUILTS[s+'_'+b.id]);
+  });
+}
+
+/* skipFlush — pass true from CRUD operations that already flushed + cleared
+   before mutating S.  Pass false (default) from tab-switch so pending edits
+   are captured before the DOM is rebuilt. */
+function renderBlocksEditor(skipFlush){
   if(editIdx < 0) return;
   const p = S.projects[editIdx];
   const blocks = p.blocks || [];
   const container = $('blocks-list');
   if(!container) return;
+
+  if(!skipFlush){
+    /* Capture any in-progress edits, then clear stale Quill references */
+    flushBlocksFromDOM();
+    clearBlockQuillInstances();
+  }
 
   if(!blocks.length){
     container.innerHTML = '<p style="font-size:12px;color:var(--mid);padding:20px 0;font-family:var(--mono);text-align:center">No blocks yet — use "+ Add Block" to start building.</p>';
@@ -1060,72 +1086,107 @@ function flushBlockFromDOM(b){
   const id = b.id;
   const g  = s => document.getElementById('blk-'+s+'-'+id);
   switch(b.type){
+
     case 'video':
       if(g('url'))   b.url       = g('url').value.trim();
       if(g('vtype')) b.videoType = g('vtype').value;
       if(g('width')) b.width     = g('width').value;
       if(g('cap'))   b.caption   = g('cap').value.trim();
       break;
+
     case 'callout':
       if(g('text'))  b.text  = g('text').value.trim();
       if(g('size'))  b.size  = g('size').value;
       if(g('align')) b.align = g('align').value;
       break;
+
     case 'text':
       if(g('cols'))  b.columns = +g('cols').value;
       if(g('width')) b.width   = g('width').value;
-      b.col1 = getColRTEHtml(1, id);
-      b.col2 = getColRTEHtml(2, id);
-      b.col3 = getColRTEHtml(3, id);
-      delete b.html; /* remove legacy field if present */
+      /* GUARD: only flush Quill RTEs when they were actually initialised.
+         Without this, getColRTEHtml returns '' and silently wipes all text
+         content whenever saveProject() is called from the Card tab. */
+      if(BLOCK_QUILTS['c1_'+id] !== undefined){
+        b.col1 = getColRTEHtml(1, id);
+        b.col2 = getColRTEHtml(2, id);
+        b.col3 = getColRTEHtml(3, id);
+        delete b.html; /* remove legacy single-column field if present */
+      }
       break;
+
     case 'image':
       if(g('url'))   b.url      = g('url').value.trim();
       if(g('width')) b.width    = g('width').value;
       if(g('cap'))   b.caption  = g('cap').value.trim();
       if(g('lbox'))  b.lightbox = g('lbox').checked;
       break;
-    case 'image-row':
+
+    case 'image-row': {
       if(g('cols')) b.columns  = +g('cols').value;
       if(g('gap'))  b.gap      = g('gap').value;
       if(g('lbox')) b.lightbox = g('lbox').checked;
-      b.images = Array.from(document.querySelectorAll(`[data-blk-img-id="${id}"]`))
+      /* GUARD: only rebuild array when the container exists in DOM.
+         Without this, querySelectorAll returns [] and wipes all images.
+         No URL filter here — empty placeholder rows are stripped at
+         export time in buildOutput(), keeping remove-by-index correct. */
+      const irCtr = document.getElementById('blk-imgs-'+id);
+      if(irCtr) b.images = Array.from(document.querySelectorAll(`[data-blk-img-id="${id}"]`))
         .map(row => ({
           url:     (row.querySelector('.blk-img-url')||{}).value||'',
           caption: (row.querySelector('.blk-img-cap')||{}).value||''
-        })).filter(im => im.url.trim());
+        }));
       break;
-    case 'video-row':
-      if(g('cols')) b.columns=+g('cols').value;
-      if(g('ar'))   b.aspectRatio=g('ar').value;
-      b.videos=Array.from(document.querySelectorAll(`[data-blk-vid-id="${id}"]`))
-        .map(row=>({url:(row.querySelector('.blk-vid-url')||{}).value||'',videoType:(row.querySelector('.blk-vid-vtype')||{}).value||'vimeo',caption:(row.querySelector('.blk-vid-cap')||{}).value||''}))
-        .filter(v=>v.url.trim());
+    }
+
+    case 'video-row': {
+      if(g('cols')) b.columns     = +g('cols').value;
+      if(g('ar'))   b.aspectRatio = g('ar').value;
+      /* GUARD: only rebuild array when container exists */
+      const vrCtr = document.getElementById('blk-vids-'+id);
+      if(vrCtr) b.videos = Array.from(document.querySelectorAll(`[data-blk-vid-id="${id}"]`))
+        .map(row => ({
+          url:       (row.querySelector('.blk-vid-url')  ||{}).value||'',
+          videoType: (row.querySelector('.blk-vid-vtype')||{}).value||'vimeo',
+          caption:   (row.querySelector('.blk-vid-cap')  ||{}).value||''
+        }));
       break;
-    case 'image-viewer':
-      if(g('lbox')) b.lightbox=g('lbox').checked;
-      b.images=Array.from(document.querySelectorAll(`[data-blk-img-id="${id}"]`))
-        .map(row=>({url:(row.querySelector('.blk-img-url')||{}).value||'',caption:(row.querySelector('.blk-img-cap')||{}).value||''}))
-        .filter(im=>im.url.trim());
+    }
+
+    case 'image-viewer': {
+      if(g('lbox')) b.lightbox = g('lbox').checked;
+      /* GUARD: only rebuild array when container exists */
+      const ivCtr = document.getElementById('blk-imgs-'+id);
+      if(ivCtr) b.images = Array.from(document.querySelectorAll(`[data-blk-img-id="${id}"]`))
+        .map(row => ({
+          url:     (row.querySelector('.blk-img-url')||{}).value||'',
+          caption: (row.querySelector('.blk-img-cap')||{}).value||''
+        }));
       break;
+    }
+
     case 'split': {
-      const ratioEl=document.getElementById('blk-ratio-'+id);
-      if(ratioEl) b.ratio=ratioEl.value;
-      ['left','right'].forEach(s=>{
-        const tEl=document.getElementById('blk-'+s+'type-'+id);
-        const lEl=document.getElementById('blk-'+s+'label-'+id);
-        const uEl=document.getElementById('blk-'+s+'url-'+id);
-        const vEl=document.getElementById('blk-'+s+'vtype-'+id);
-        const xEl=document.getElementById('blk-'+s+'lbox-'+id);
-        if(tEl) b[s+'Type']     =tEl.value;
-        if(lEl) b[s+'Label']    =lEl.value.trim();
-        if(uEl) b[s+'Url']      =uEl.value.trim();
-        if(vEl) b[s+'VideoType']=vEl.value;
-        if(xEl) b[s+'Lightbox'] =xEl.checked;
-        b[s+'Html']=getSplitRTEHtml(s,id);
-        b[s+'Images']=Array.from(document.querySelectorAll(`[data-blk-split-img="${s}_${id}"]`))
-          .map(row=>({url:(row.querySelector('.blk-sim-url')||{}).value||'',caption:(row.querySelector('.blk-sim-cap')||{}).value||''}))
-          .filter(im=>im.url.trim());
+      const ratioEl = document.getElementById('blk-ratio-'+id);
+      if(ratioEl) b.ratio = ratioEl.value;
+      ['left','right'].forEach(s => {
+        const tEl = document.getElementById('blk-'+s+'type-'+id);
+        const lEl = document.getElementById('blk-'+s+'label-'+id);
+        const uEl = document.getElementById('blk-'+s+'url-'+id);
+        const vEl = document.getElementById('blk-'+s+'vtype-'+id);
+        const xEl = document.getElementById('blk-'+s+'lbox-'+id);
+        if(tEl) b[s+'Type']      = tEl.value;
+        if(lEl) b[s+'Label']     = lEl.value.trim();
+        if(uEl) b[s+'Url']       = uEl.value.trim();
+        if(vEl) b[s+'VideoType'] = vEl.value;
+        if(xEl) b[s+'Lightbox']  = xEl.checked;
+        /* GUARD: only flush Quill RTE when initialised */
+        if(BLOCK_QUILTS[s+'_'+id] !== undefined) b[s+'Html'] = getSplitRTEHtml(s, id);
+        /* GUARD: only rebuild images array when container exists */
+        const siCtr = document.getElementById('blk-'+s+'imgs-'+id);
+        if(siCtr) b[s+'Images'] = Array.from(document.querySelectorAll(`[data-blk-split-img="${s}_${id}"]`))
+          .map(row => ({
+            url:     (row.querySelector('.blk-sim-url')||{}).value||'',
+            caption: (row.querySelector('.blk-sim-cap')||{}).value||''
+          }));
       });
       break;
     }
@@ -1147,91 +1208,135 @@ document.addEventListener('click', () => {
   const m = $('blk-add-menu'); if(m) m.style.display='none';
 });
 
-/* Block CRUD */
+/* Block CRUD
+   Pattern for every mutating op:
+     1. flushBlocksFromDOM()       — capture any pending DOM edits into S
+     2. clearBlockQuillInstances() — drop stale Quill refs AFTER flush
+     3. mutate S
+     4. renderBlocksEditor(true)   — rebuild DOM from updated S without re-flushing
+   Skipping step 2 / using renderBlocksEditor() (without true) would cause the
+   re-render's internal flush to re-read the un-mutated DOM and undo the mutation. */
+
 window.addBlock = type => {
   if(editIdx < 0) return;
+  unsaved = true;
   flushBlocksFromDOM();
-  const id = 'b'+Date.now();
+  clearBlockQuillInstances();
+  /* Timestamp + random suffix prevents ID collisions across rapid adds */
+  const id = 'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
   const defaults = {
-    video:          {id, type:'video',         url:'', videoType:'vimeo', caption:'', width:'wide'},
-    callout:        {id, type:'callout',        text:'', size:'xl', align:'center'},
-    text:           {id, type:'text',           col1:'', col2:'', col3:'', columns:1, width:'full'},
-    image:          {id, type:'image',          url:'', caption:'', width:'full', lightbox:true},
-    'image-row':    {id, type:'image-row',      images:[{url:'',caption:''},{url:'',caption:''}], columns:2, gap:'normal', lightbox:true},
-    split:          {id, type:'split',          ratio:'50-50', leftType:'text', leftHtml:'', leftLabel:'', leftUrl:'', leftVideoType:'vimeo', leftImages:[], leftLightbox:true, rightType:'video', rightHtml:'', rightLabel:'', rightUrl:'', rightVideoType:'vimeo', rightImages:[], rightLightbox:true},
-    'video-row':    {id, type:'video-row',      videos:[{url:'',videoType:'vimeo',caption:''},{url:'',videoType:'vimeo',caption:''}], columns:2, aspectRatio:'16:9'},
-    'image-viewer': {id, type:'image-viewer',   images:[{url:'',caption:''},{url:'',caption:''}], lightbox:true},
+    video:          {id, type:'video',        url:'', videoType:'vimeo', caption:'', width:'wide'},
+    callout:        {id, type:'callout',      text:'', size:'xl', align:'center'},
+    text:           {id, type:'text',         col1:'', col2:'', col3:'', columns:1, width:'full'},
+    image:          {id, type:'image',        url:'', caption:'', width:'full', lightbox:true},
+    'image-row':    {id, type:'image-row',    images:[], columns:2, gap:'normal', lightbox:true},
+    split:          {id, type:'split',        ratio:'50-50',
+                     leftType:'text',  leftHtml:'',  leftLabel:'',  leftUrl:'',  leftVideoType:'vimeo',  leftImages:[],  leftLightbox:true,
+                     rightType:'video', rightHtml:'', rightLabel:'', rightUrl:'', rightVideoType:'vimeo', rightImages:[], rightLightbox:true},
+    'video-row':    {id, type:'video-row',    videos:[], columns:2, aspectRatio:'16:9'},
+    'image-viewer': {id, type:'image-viewer', images:[], lightbox:true},
   };
   const p = S.projects[editIdx];
   if(!p.blocks) p.blocks = [];
-  p.blocks.push(defaults[type]||{id,type});
+  p.blocks.push(defaults[type] || {id, type});
   $('blk-add-menu').style.display = 'none';
-  renderBlocksEditor();
+  renderBlocksEditor(true);
 };
 
 window.removeBlock = blkId => {
   if(editIdx < 0) return;
+  unsaved = true;
   flushBlocksFromDOM();
+  clearBlockQuillInstances();
   const p = S.projects[editIdx];
   p.blocks = (p.blocks||[]).filter(b => b.id !== blkId);
-  renderBlocksEditor();
+  renderBlocksEditor(true);
 };
 
 window.moveBlock = (blkId, dir) => {
   if(editIdx < 0) return;
+  unsaved = true;
   flushBlocksFromDOM();
-  const blocks = S.projects[editIdx].blocks||[];
-  const i = blocks.findIndex(b => b.id===blkId);
+  clearBlockQuillInstances();
+  const blocks = S.projects[editIdx].blocks || [];
+  const i = blocks.findIndex(b => b.id === blkId);
   if(i < 0) return;
-  const ni = i+dir;
+  const ni = i + dir;
   if(ni < 0 || ni >= blocks.length) return;
   [blocks[i], blocks[ni]] = [blocks[ni], blocks[i]];
-  renderBlocksEditor();
+  renderBlocksEditor(true);
 };
 
 window.addBlockImage = blkId => {
   if(editIdx < 0) return;
+  unsaved = true;
   flushBlocksFromDOM();
-  const b = (S.projects[editIdx].blocks||[]).find(b=>b.id===blkId);
+  clearBlockQuillInstances();
+  const b = (S.projects[editIdx].blocks||[]).find(b => b.id === blkId);
   if(!b) return;
-  if(!b.images) b.images=[];
-  b.images.push({url:'',caption:''});
-  renderBlocksEditor();
+  if(!b.images) b.images = [];
+  b.images.push({url:'', caption:''});
+  renderBlocksEditor(true);
 };
 
 window.removeBlockImage = (blkId, imgIdx) => {
   if(editIdx < 0) return;
+  unsaved = true;
   flushBlocksFromDOM();
-  const b = (S.projects[editIdx].blocks||[]).find(b=>b.id===blkId);
-  if(!b||!b.images) return;
-  b.images.splice(imgIdx,1);
-  renderBlocksEditor();
+  clearBlockQuillInstances();
+  const b = (S.projects[editIdx].blocks||[]).find(b => b.id === blkId);
+  if(!b || !b.images) return;
+  b.images.splice(imgIdx, 1);
+  renderBlocksEditor(true);
 };
 
+window.addRowVideo = blkId => {
+  if(editIdx < 0) return;
+  unsaved = true;
+  flushBlocksFromDOM();
+  clearBlockQuillInstances();
+  const b = (S.projects[editIdx].blocks||[]).find(b => b.id === blkId);
+  if(!b) return;
+  if(!b.videos) b.videos = [];
+  b.videos.push({url:'', videoType:'vimeo', caption:''});
+  renderBlocksEditor(true);
+};
 
-window.addRowVideo = blkId=>{
-  if(editIdx<0) return; flushBlocksFromDOM();
-  const b=(S.projects[editIdx].blocks||[]).find(b=>b.id===blkId); if(!b) return;
-  if(!b.videos) b.videos=[];
-  b.videos.push({url:'',videoType:'vimeo',caption:''});
-  renderBlocksEditor();
+window.removeRowVideo = (blkId, vidIdx) => {
+  if(editIdx < 0) return;
+  unsaved = true;
+  flushBlocksFromDOM();
+  clearBlockQuillInstances();
+  const b = (S.projects[editIdx].blocks||[]).find(b => b.id === blkId);
+  if(!b || !b.videos) return;
+  b.videos.splice(vidIdx, 1);
+  renderBlocksEditor(true);
 };
-window.removeRowVideo = (blkId,vidIdx)=>{
-  if(editIdx<0) return; flushBlocksFromDOM();
-  const b=(S.projects[editIdx].blocks||[]).find(b=>b.id===blkId); if(!b||!b.videos) return;
-  b.videos.splice(vidIdx,1); renderBlocksEditor();
+
+window.addSplitImage = (blkId, side) => {
+  if(editIdx < 0) return;
+  unsaved = true;
+  flushBlocksFromDOM();
+  clearBlockQuillInstances();
+  const b = (S.projects[editIdx].blocks||[]).find(b => b.id === blkId);
+  if(!b) return;
+  const k = side + 'Images';
+  if(!b[k]) b[k] = [];
+  b[k].push({url:'', caption:''});
+  renderBlocksEditor(true);
 };
-window.addSplitImage = (blkId,side)=>{
-  if(editIdx<0) return; flushBlocksFromDOM();
-  const b=(S.projects[editIdx].blocks||[]).find(b=>b.id===blkId); if(!b) return;
-  const k=side+'Images'; if(!b[k]) b[k]=[];
-  b[k].push({url:'',caption:''}); renderBlocksEditor();
-};
-window.removeSplitImage = (blkId,side,imgIdx)=>{
-  if(editIdx<0) return; flushBlocksFromDOM();
-  const b=(S.projects[editIdx].blocks||[]).find(b=>b.id===blkId); if(!b) return;
-  const k=side+'Images'; if(!b[k]) return;
-  b[k].splice(imgIdx,1); renderBlocksEditor();
+
+window.removeSplitImage = (blkId, side, imgIdx) => {
+  if(editIdx < 0) return;
+  unsaved = true;
+  flushBlocksFromDOM();
+  clearBlockQuillInstances();
+  const b = (S.projects[editIdx].blocks||[]).find(b => b.id === blkId);
+  if(!b) return;
+  const k = side + 'Images';
+  if(!b[k]) return;
+  b[k].splice(imgIdx, 1);
+  renderBlocksEditor(true);
 };
 
 window.syncColor  = v=>{ $('e-color').value=v; $('e-swatch').style.background=v; };
@@ -1383,7 +1488,20 @@ function flushAll(){
    EXPORT + DOWNLOAD
 ═══════════════════════════════════════ */
 function buildOutput(){
-  return 'const PORTFOLIO_DATA = ' + JSON.stringify(S, null, 2)
+  /* Deep-clone so we can strip editing artefacts without mutating live state.
+     Empty-URL placeholder rows (added when user creates a new block) are kept
+     in S during editing so remove-by-index stays accurate, but they must not
+     appear in the exported file — work.html would try to render broken images. */
+  const out = JSON.parse(JSON.stringify(S));
+  out.projects.forEach(p => {
+    (p.blocks||[]).forEach(b => {
+      if(b.images)      b.images      = b.images.filter(im => im.url && im.url.trim());
+      if(b.videos)      b.videos      = b.videos.filter(v  => v.url  && v.url.trim());
+      if(b.leftImages)  b.leftImages  = b.leftImages.filter(im => im.url && im.url.trim());
+      if(b.rightImages) b.rightImages = b.rightImages.filter(im => im.url && im.url.trim());
+    });
+  });
+  return 'const PORTFOLIO_DATA = ' + JSON.stringify(out, null, 2)
        + ";\n\nif (typeof module !== 'undefined') module.exports = PORTFOLIO_DATA;";
 }
 
@@ -1469,6 +1587,21 @@ window.removeThumb=i=>{
   renderThumbs();
 };
 /* ── END GALLERY THUMBNAILS ── */
+/* ═══════════════════════════════════════
+   UNSAVED CHANGES TRACKING
+   Attach once to the static editor container. Any user interaction
+   (typing, selecting, checking) inside the editor sets the flag.
+   CRUD block operations also set it explicitly where DOM events may
+   not fire (e.g. clicking ↑ ↓ ✕ buttons).
+═══════════════════════════════════════ */
+(function(){
+  const ed = $('view-editor');
+  if(!ed) return;
+  const mark = () => { unsaved = true; };
+  ed.addEventListener('input',  mark, {passive:true});
+  ed.addEventListener('change', mark, {passive:true});
+})();
+
 /* ═══════════════════════════════════════
    INIT
 ═══════════════════════════════════════ */
