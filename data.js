@@ -943,7 +943,7 @@ const PORTFOLIO_DATA = {
       "gridSpan": 5,
       "thumbnailUrl": "images/ofnoah-discreet-digital-clinic/thumb.webp",
       "thumbnailType": "image",
-      "description": "Brand and campaign work for ofnoah — Singapore's discreet digital clinic for men's health, making it easy and stigma-free to get the help you need.",
+      "description": "<p>Brand and campaign work for ofnoah — Singapore's discreet digital clinic for men's health, making it easy and stigma-free to get the help you need.</p>",
       "fullDescription": "ofnoah exists because men don't ask for help. The brand and campaign work was built around removing every barrier — the embarrassment, the inconvenience, the fear of judgement — and replacing them with a tone that was direct, warm, and completely judgment-free.",
       "projectTemplate": "ofnoah",
       "collaterals": [],
@@ -951,18 +951,29 @@ const PORTFOLIO_DATA = {
       "active": true,
       "blocks": [
         {
-          "id": "ba01",
-          "type": "image",
-          "url": "images/ofnoah-discreet-digital-clinic/mainboard.gif",
-          "width": "full",
-          "lightbox": false,
-          "caption": ""
+          "id": "bmp98qlt4h76",
+          "type": "split",
+          "ratio": "50-50",
+          "leftType": "image",
+          "leftHtml": "",
+          "leftLabel": "Banner",
+          "leftUrl": "images/ofnoah-discreet-digital-clinic/mainboard.gif",
+          "leftVideoType": "vimeo",
+          "leftImages": [],
+          "leftLightbox": true,
+          "rightType": "image",
+          "rightHtml": "",
+          "rightLabel": "Outdoor",
+          "rightUrl": "images/ofnoah-discreet-digital-clinic/outdoor2.webp",
+          "rightVideoType": "vimeo",
+          "rightImages": [],
+          "rightLightbox": true
         },
         {
           "id": "ba02",
           "type": "text",
-          "col1": "<p>ofnoah exists because men don't ask for help. The brand and campaign work was built around removing every barrier — the embarrassment, the inconvenience, the fear of judgement — and replacing them with a tone that was direct, warm, and completely judgment-free.</p>",
-          "col2": "",
+          "col1": "<p>Men don't ask for help. Not with their health, not with their bodies, and definitely not with the things they're most embarrassed about. The hardest brief in men's health isn't the science. It's the silence.</p><p>ofnoah was built to break it.</p><p>The brand and campaign work was built around one goal: remove every barrier stopping men from getting the help they actually needed — the embarrassment, the inconvenience, the fear of judgement — and replace them with something they could trust. A tone that was direct, warm, and entirely judgement-free.</p>",
+          "col2": "<p>The blurred faces weren't just a visual device. They were the idea. Discretion, made visible. Men could see themselves in the work precisely because no one could see them at all. The copy did the rest — playful enough to disarm, honest enough to land.</p><p>Every line written to meet men exactly where they are: slightly uncomfortable, maybe a little curious, and one click away from getting help they should have sought a long time ago.</p>",
           "col3": "",
           "columns": 2,
           "width": "full"
@@ -990,7 +1001,16 @@ const PORTFOLIO_DATA = {
           ],
           "columns": 4,
           "gap": "tight",
-          "lightbox": true
+          "lightbox": true,
+          "layout": "grid"
+        },
+        {
+          "id": "ba05",
+          "type": "image",
+          "url": "images/ofnoah-discreet-digital-clinic/standard-banner.gif",
+          "width": "full",
+          "lightbox": false,
+          "caption": ""
         },
         {
           "id": "ba04",
@@ -998,7 +1018,7 @@ const PORTFOLIO_DATA = {
           "images": [
             {
               "url": "images/ofnoah-discreet-digital-clinic/outdoor3.webp",
-              "caption": ""
+              "caption": "Outdoor"
             },
             {
               "url": "images/ofnoah-discreet-digital-clinic/vertical-thumb.webp",
@@ -1015,23 +1035,8 @@ const PORTFOLIO_DATA = {
           ],
           "columns": 4,
           "gap": "tight",
-          "lightbox": true
-        },
-        {
-          "id": "ba06",
-          "type": "image",
-          "url": "images/ofnoah-discreet-digital-clinic/outdoor2.webp",
-          "width": "full",
           "lightbox": true,
-          "caption": ""
-        },
-        {
-          "id": "ba05",
-          "type": "image",
-          "url": "images/ofnoah-discreet-digital-clinic/standard-banner.gif",
-          "width": "full",
-          "lightbox": false,
-          "caption": ""
+          "layout": "grid"
         }
       ]
     },
