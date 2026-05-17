@@ -1330,9 +1330,9 @@ const PORTFOLIO_DATA = {
         {
           "id": "b701",
           "type": "split",
-          "ratio": "50-50",
+          "ratio": "40-60",
           "leftType": "text",
-          "leftHtml": "<p>Better Is Never Down to One Thing challenged the financial category's habit of reducing life to metrics. The platform gave HSBC a more human voice — one that acknowledged complexity, celebrated multidimensionality, and spoke to people as whole human beings rather than account holders.</p>",
+          "leftHtml": "<p>Finance has a habit of reducing people to numbers. Portfolios. Interest rates. Credit scores. As if a life well-lived could be measured in metrics alone.</p><p>HSBC's global platform pushed back on that. Our job was to make it land locally — to take \"Better is never down to one thing\" and give it meaning beyond a tagline.</p><p>The idea was simple but necessary: life is complex, multidimensional, and irreducible. And a bank that understands that speaks to you differently — not as an account holder, but as a whole person.</p><p>We gave HSBC a more human voice. One that acknowledged the messiness of real life and sat comfortably inside it.</p>",
           "leftLabel": "About the Work",
           "leftUrl": "",
           "leftVideoType": "vimeo",
