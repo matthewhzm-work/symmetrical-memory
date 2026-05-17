@@ -1039,7 +1039,7 @@ const PORTFOLIO_DATA = {
       "id": "hsbc-choose-what-you-love",
       "brand": "HSBC",
       "title": "Choose What You Love",
-      "subtitle": "A campaign empowering customers to put their money where their passions are",
+      "subtitle": "A credit card quiz. A personalised music video. 24,000 ways to find your match.",
       "award": "EFFIES SILVER",
       "tags": [
         "Integrated",
@@ -1051,7 +1051,7 @@ const PORTFOLIO_DATA = {
       "gridSpan": 4,
       "thumbnailUrl": "images/hsbc-choose-what-you-love/collateral-2.gif",
       "thumbnailType": "gif",
-      "description": "<p>HSBC Choose What You Love put passion and personal values at the heart of financial decision-making.</p>",
+      "description": "<p>Helping HSBC cardholders find their perfect card — through a personalised music video with 24,000 unique permutations.</p>",
       "fullDescription": "<p>Choose What You Love repositioned HSBC's rewards proposition around what customers genuinely care about — not just cashback categories, but the things that define how they live. The campaign ran across digital, social and in-branch touchpoints.</p>",
       "projectTemplate": "cwyl",
       "collaterals": [
@@ -1111,7 +1111,7 @@ const PORTFOLIO_DATA = {
         {
           "id": "b801",
           "type": "callout",
-          "text": "What if your interests could help you choose which credit card suits you best?",
+          "text": "What if your personal interests could help you choose which credit card suits you best?",
           "size": "lg",
           "align": "center"
         },
@@ -1145,11 +1145,11 @@ const PORTFOLIO_DATA = {
         {
           "id": "b803",
           "type": "split",
-          "ratio": "50-50",
+          "ratio": "40-60",
           "leftType": "text",
           "leftUrl": "images/hsbc-choose-what-you-love/collateral-1.gif",
           "leftLabel": "",
-          "leftHtml": "<h3>An interactive music video experience that serves you an HSBC credit card tailored to your lifestyle:</h3><p><br></p><h3>Step 1: Answer a short quiz</h3><h3>Step 2: Receive your personalised music video</h3><h3>Step 3: Learn more and sign up for your credit card</h3>",
+          "leftHtml": "<p>Choosing a credit card should be simple. It rarely is — especially when every card from the same bank comes with its own set of perks, promotions, and lifestyle benefits.</p><p>We built an interactive quiz experience to cut through the noise. But we didn't want to just match users to a card. We wanted to make the journey feel as personal as the destination.</p><p><strong>Step 1:</strong> Answer a short quiz</p><p><strong>Step 2:</strong> Receive your personalised music video</p><p><strong>Step 3:</strong> Learn more and sign up for your credit card</p>",
           "leftVideoType": "vimeo",
           "leftImages": [],
           "leftLightbox": true,
@@ -1162,12 +1162,23 @@ const PORTFOLIO_DATA = {
           "rightLightbox": true
         },
         {
-          "id": "b804",
-          "type": "video",
-          "url": "https://vimeo.com/1191934210",
-          "videoType": "vimeo",
-          "caption": "HSBC — Choose What You Love",
-          "width": "wide"
+          "id": "bmp97zaj88vl",
+          "type": "split",
+          "ratio": "60-40",
+          "leftType": "video",
+          "leftHtml": "",
+          "leftLabel": "Generated Music Video Sample",
+          "leftUrl": "https://vimeo.com/1191934210",
+          "leftVideoType": "vimeo",
+          "leftImages": [],
+          "leftLightbox": true,
+          "rightType": "text",
+          "rightHtml": "<p>Combining user input with real-time data — time of day, date, weather — we created something no one expected: a fully personalised music video. </p><p>Collaborating with local artist Dru Chen and legendary Singapore producer Leonard Soosay of Snakeweed Studios, we crafted an original soundtrack that shifted and changed based on each user's answers.</p><p><strong>Up to 24,000 unique video permutations. </strong>One for every kind of HSBC cardholder.</p>",
+          "rightLabel": "",
+          "rightUrl": "",
+          "rightVideoType": "vimeo",
+          "rightImages": [],
+          "rightLightbox": true
         }
       ]
     },
