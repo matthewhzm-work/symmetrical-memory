@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 40" fill="currentColor">
+  <!-- Trophy cup shape -->
+  <path d="M8,2 L24,2 L22,20 Q20,28 16,30 Q12,28 10,20 Z"/>
+  <!-- Trophy stem -->
+  <rect x="13" y="30" width="6" height="5"/>
+  <!-- Base -->
+  <rect x="9" y="35" width="14" height="3.5" rx="1"/>
+  <!-- Handles -->
+  <path d="M8,6 Q3,8 3,13 Q3,18 8,20" fill="none" stroke="currentColor" stroke-width="2.5"/>
+  <path d="M24,6 Q29,8 29,13 Q29,18 24,20" fill="none" stroke="currentColor" stroke-width="2.5"/>
+  <!-- Wordmark -->
+  <text x="37" y="28" font-family="sans-serif" font-weight="800" font-size="18" letter-spacing="1.5">EFFIE</text>
+</svg>

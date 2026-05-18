@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 92 40" fill="none" stroke="currentColor">
+  <!-- Globe outline -->
+  <circle cx="20" cy="20" r="17" stroke-width="2.5"/>
+  <!-- Equator -->
+  <ellipse cx="20" cy="20" rx="17" ry="7" stroke-width="1.5"/>
+  <!-- Meridian -->
+  <line x1="20" y1="3" x2="20" y2="37" stroke-width="1.5"/>
+  <!-- LIA wordmark -->
+  <text x="45" y="27" font-family="sans-serif" font-weight="900" font-size="21" letter-spacing="1" fill="currentColor" stroke="none">LIA</text>
+</svg>

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 198 40" fill="currentColor">
+  <!-- 5-point star -->
+  <polygon points="20,1 23.8,13.1 36.6,13.1 26.4,21.2 30.2,33.3 20,25.2 9.8,33.3 13.6,21.2 3.4,13.1 16.2,13.1"/>
+  <!-- Stacked wordmark -->
+  <text x="46" y="16" font-family="sans-serif" font-weight="700" font-size="10" letter-spacing="1.8">MARKETING</text>
+  <text x="46" y="31" font-family="sans-serif" font-weight="700" font-size="10" letter-spacing="1.8">EXCELLENCE</text>
+</svg>
