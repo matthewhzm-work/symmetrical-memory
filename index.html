@@ -268,9 +268,8 @@ nav.scrolled{
   display:flex;align-items:center;gap:10px;
 }
 .awards-eyebrow em{color:var(--red);font-style:normal}
-.awards-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 48px;align-items:start}
-.year-group{margin-bottom:28px}
-.year-group:last-child{margin-bottom:0}
+.awards-cols{column-count:3;column-gap:48px}
+.year-group{margin-bottom:28px;break-inside:avoid}
 .year-label{
   font-family:var(--mono);font-size:10px;letter-spacing:0.18em;
   text-transform:uppercase;color:var(--red);margin-bottom:10px;
@@ -334,15 +333,14 @@ footer{
   .about-grid{grid-template-columns:1fr;gap:64px}
   #about{padding-bottom:64px}
   #awards{padding:40px var(--pad) 60px}
-  .awards-cols{grid-template-columns:1fr 1fr}
-  .year-group{grid-column:auto!important}
+  .awards-cols{column-count:2}
   .award-row{grid-template-columns:80px 1fr}
   .award-brand{display:none}
   footer{flex-direction:column;gap:10px;text-align:center;align-items:center}
 }
 @media(max-width:600px){
   .project-grid{grid-template-columns:1fr}
-  .awards-cols{grid-template-columns:1fr}
+  .awards-cols{column-count:1}
 }
 </style>
 </head>
@@ -536,24 +534,11 @@ footer{
   const years = Object.keys(byYear).sort((a,b)=>b-a);
   const tc = t => ['Gold','Silver','Bronze'].includes(t)?'t-'+t:'t-other';
 
-  /* Balance years across 3 columns by row count (greedy shortest-column) */
-  const colAssign = {};
-  const colRows = [0, 0, 0];
-  years.forEach(yr => {
-    const n = byYear[yr].length + 1; // award rows + year-label row
-    const shortest = colRows.indexOf(Math.min(...colRows));
-    colAssign[yr] = shortest + 1; // 1-indexed grid-column
-    colRows[shortest] += n;
-  });
-
-  /* Render each year-group as a direct child in chronological (DOM) order.
-     grid-column places them into the correct desktop column.
-     On mobile the CSS overrides grid-column to auto so they flow chronologically. */
+  /* column-count layout — year-groups flow naturally, no explicit column assignment needed */
   const ac = $('awards-cols');
   years.forEach(yr => {
     const g = document.createElement('div');
     g.className = 'year-group reveal';
-    g.style.gridColumn = colAssign[yr];
     g.innerHTML = `<div class="year-label">${yr}</div>`
       + byYear[yr].map(a =>
         `<div class="award-row"><span class="award-tier ${tc(a.tier)}">${a.tier}</span><span class="award-info"><strong>${a.show}</strong><span class="award-info-sub">— ${a.category}</span></span>${a.brand?`<span class="award-brand">${a.brand}</span>`:'<span></span>'}</div>`
