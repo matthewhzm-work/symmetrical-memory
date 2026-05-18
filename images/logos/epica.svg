@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 40" fill="currentColor">
-  <!-- Diamond / rotated square mark -->
-  <polygon points="20,2 36,20 20,38 4,20"/>
-  <!-- EPICA wordmark -->
-  <text x="46" y="26" font-family="sans-serif" font-weight="800" font-size="15" letter-spacing="1">EPICA</text>
-</svg>
