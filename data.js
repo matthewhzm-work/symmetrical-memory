@@ -2054,7 +2054,7 @@ const PORTFOLIO_DATA = {
     }
   ],
   "linkedin": "https://www.linkedin.com/in/matthew-ho-4947016a/",
-  "bioHeadline": "Welcome to my never-quite-ending",
+  "bioHeadline": "My never-quite-ending",
   "bioHeadlineAccent": "search for screen time"
 };
 
