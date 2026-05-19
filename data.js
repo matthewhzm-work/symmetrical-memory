@@ -127,6 +127,83 @@ const PORTFOLIO_DATA = {
       "brand": "HSBC"
     },
     {
+      "year": "2026",
+      "show": "MARKies",
+      "tier": "Gold",
+      "category": "Most Creative – Specific Audience",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2026",
+      "show": "MARKies",
+      "tier": "Silver",
+      "category": "Most Creative – Purpose-Driven Campaigns",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2026",
+      "show": "MARKies",
+      "tier": "Bronze",
+      "category": "Most Creative – Cause Marketing",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2026",
+      "show": "MARKies",
+      "tier": "Bronze",
+      "category": "Most Creative – Gamification Campaign",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2025",
+      "show": "SMMA",
+      "tier": "Gold",
+      "category": "Best in Marketing Innovation",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2025",
+      "show": "SMMA",
+      "tier": "Gold",
+      "category": "Best Event-led Campaign",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2025",
+      "show": "SMMA",
+      "tier": "Gold",
+      "category": "Greater Good Awards",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2025",
+      "show": "Mad Stars",
+      "tier": "Bronze",
+      "category": "Sport Stars – Experience & Activation",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2025",
+      "show": "Campaign Brief — The Work",
+      "tier": "Winner",
+      "category": "Health & Pharma",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2025",
+      "show": "Campaign Brief — The Work",
+      "tier": "Winner",
+      "category": "Work for Good",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2025",
+      "show": "Campaign Brief — The Work",
+      "tier": "Winner",
+      "category": "Experiential + Immersive",
+      "brand": "HSBC"
+    },
+    {
       "year": "2024",
       "show": "Epica Awards",
       "tier": "Gold",
@@ -201,6 +278,13 @@ const PORTFOLIO_DATA = {
       "show": "New York Festivals",
       "tier": "Finalist",
       "category": "Social / Environment Good",
+      "brand": "HSBC"
+    },
+    {
+      "year": "2024",
+      "show": "SMMA",
+      "tier": "Finalist",
+      "category": "Collaboration & Partnership – Social/Environmental Good",
       "brand": "HSBC"
     },
     {
