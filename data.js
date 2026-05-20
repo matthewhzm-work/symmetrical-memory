@@ -2149,7 +2149,29 @@ const PORTFOLIO_DATA = {
   ],
   "linkedin": "https://www.linkedin.com/in/matthew-ho-4947016a/",
   "bioHeadline": "My never-quite-ending",
-  "bioHeadlineAccent": "search for screen time"
+  "bioHeadlineAccent": "search for screen time",
+  "totoPage": {
+    "eyebrow": "Lucky Numbers Generator",
+    "title": "The odds are 1 in 13,983,816.<br><em>I've seen worse briefs.</em>",
+    "subtitle": "Six panels. Forty-nine numbers. One shot at early retirement — or at least a good story for the next pitch. Quick Pick does the thinking. You do the hoping.",
+    "quips": [
+      "Statistically, you have better odds of winning a Cannes Grand Prix.",
+      "Six numbers locked. No revisions. First time for everything.",
+      "In advertising, we call this a long-term awareness play.",
+      "The brief was: pick six. The only brief no client has ever changed.",
+      "If this wins, I'm flying to France. For Cannes. Obviously.",
+      "Odds: 1 in 13,983,816. Still better than first-round client approval.",
+      "Numbers filed. Now we wait — same feeling as post-submission.",
+      "Ten years of picking the right words. Numbers are somehow harder.",
+      "Singapore dreaming. Six panels at a time. Results in 4–6 business days.",
+      "The ROI here is speculative, but the brand experience is exceptional.",
+      "Filed under: long-term investment, niche target audience, zero media budget.",
+      "No strategy deck required. Pure instinct. God help us.",
+      "My creative director would call this 'owning the whitespace.'",
+      "A fully integrated six-panel campaign with zero client touchpoints.",
+      "Committed to all six. No overthinking. A new personal best."
+    ]
+  }
 };
 
 if (typeof module !== 'undefined') module.exports = PORTFOLIO_DATA;

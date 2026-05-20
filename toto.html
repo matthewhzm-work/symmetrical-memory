@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOTO Lucky Pick — Matthew Ho</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500&family=Lexend:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --paper:#FFFAF0;--ink:#1D2540;--red:#D93240;--mid:#1C3059;--light:#E0D8CC;
+  --coral:#E8604C;
+}
+html{-webkit-font-smoothing:antialiased}
+body{background:var(--paper);color:var(--ink);font-family:'Inter',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;height:68px;display:flex;align-items:center;padding:0 60px;background:var(--paper);z-index:200;gap:20px;transition:background 0.3s}
+nav.scrolled{background:rgba(255,250,240,0.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.nav-name{font-family:'Lexend',sans-serif;font-size:22px;font-weight:700;letter-spacing:0.01em;text-decoration:none;color:var(--ink);white-space:nowrap;flex-shrink:0}
+.nav-name em{color:var(--red);font-style:normal}
+.nav-spacer{flex:1}
+.nav-back{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--mid);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;text-decoration-color:rgba(28,48,89,0.3);flex-shrink:0;transition:color 0.2s;display:flex;align-items:center;gap:6px}
+.nav-back:hover{color:var(--ink)}
+.nav-back-arrow{display:inline-block;transition:transform 0.2s}
+.nav-back:hover .nav-back-arrow{transform:translateX(-4px)}
+.nav-icons{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.nav-icon{display:flex;align-items:center;justify-content:center;color:var(--mid);transition:color 0.18s}
+.nav-icon:hover{color:var(--ink)}
+.nav-icon svg{width:18px;height:18px;display:block}
+
+/* ── WRAPPER ── */
+.wrap{max-width:1040px;margin:0 auto;padding:0 60px;padding-top:68px}
+
+/* ── PAGE HEADER ── */
+.pg-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(29,37,64,0.38);margin-top:52px;margin-bottom:14px}
+.pg-title{font-family:'Lexend',sans-serif;font-size:clamp(26px,3.8vw,50px);font-weight:700;letter-spacing:-0.025em;line-height:1.06;margin-bottom:14px}
+.pg-title em{color:var(--red);font-style:normal}
+.pg-sub{font-size:14.5px;color:rgba(29,37,64,0.58);max-width:520px;line-height:1.72;margin-bottom:36px}
+
+/* ── BUTTONS ── */
+.btn-row{display:flex;gap:12px;align-items:center;margin-bottom:26px}
+.btn-qp{font-family:'Lexend',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.04em;background:var(--red);color:var(--paper);border:none;padding:12px 30px;cursor:pointer;transition:transform 0.2s cubic-bezier(0.22,1,0.36,1)}
+.btn-qp:hover{transform:translateY(-4px)}
+.btn-qp:active{transform:translateY(0)}
+.btn-qp[disabled]{opacity:0.45;cursor:not-allowed;pointer-events:none}
+.btn-clear{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:rgba(29,37,64,0.5);border:1px solid var(--light);padding:12px 20px;cursor:pointer;transition:transform 0.2s,border-color 0.2s,color 0.2s}
+.btn-clear:hover{transform:translateY(-4px);border-color:var(--ink);color:var(--ink)}
+.btn-copy{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;background:transparent;color:rgba(29,37,64,0.5);border:1px solid var(--light);padding:12px 20px;cursor:pointer;transition:transform 0.2s,border-color 0.2s,color 0.2s;display:none;align-items:center;gap:7px}
+.btn-copy:hover{transform:translateY(-4px);border-color:var(--ink);color:var(--ink)}
+.btn-copy.show{display:flex}
+.btn-copy.ok{color:var(--mid);border-color:var(--mid)}
+
+/* ── TICKET SCROLL CONTAINER ── */
+.ticket-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:30px}
+
+/* ══════════════════════════════════════════
+   THE TICKET — Arial Narrow only inside here
+   ══════════════════════════════════════════ */
+.ticket{
+  width:920px;min-width:920px;
+  background:#fff;border:1.5px solid #ADADAD;
+  display:flex;
+  font-family:'Arial Narrow',Arial,sans-serif;
+  user-select:none;
+}
+
+/* Left sidebar */
+.tl{width:86px;flex-shrink:0;border-right:1.5px solid #ADADAD;display:flex;flex-direction:column}
+.tl-hd{background:var(--coral);color:#fff;font-size:6.5px;font-weight:700;text-align:center;padding:4px 3px;letter-spacing:0.05em;text-transform:uppercase;line-height:1.45}
+.tl-body{flex:1;padding:4px 0 2px}
+.tl-sep{border-top:1px solid #DDD;margin:2px 0;padding-top:2px}
+.cb-row{display:flex;align-items:center;gap:4px;padding:2px 7px;font-size:8px;font-weight:700;color:#1A1A1A;line-height:1.5;font-family:'Arial Narrow',Arial,sans-serif;cursor:pointer;user-select:none}
+.cb-row input[type=checkbox]{width:8px;height:8px;margin:0;flex-shrink:0;accent-color:var(--coral);pointer-events:none;cursor:default}
+.cb-row.active{color:var(--coral)}
+
+/* Main area */
+.tm{flex:1;padding:5px 6px 5px 5px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tm-instr{font-size:7px;color:#666;border-bottom:1px solid #E8E8E8;padding-bottom:4px;line-height:1.5;font-family:'Arial Narrow',Arial,sans-serif}
+.panels{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;flex:1}
+
+/* Panel */
+.panel{border:1px solid #C8C8C8;padding:3px 3px 4px;display:flex;flex-direction:column;gap:2px}
+.pnl-hdr{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:2px;border-bottom:1px solid #EFEFEF}
+.pnl-id{font-size:11px;font-weight:700;color:var(--coral);font-family:'Arial Narrow',Arial,sans-serif}
+.pnl-type{font-size:6.5px;color:#AAA;font-family:'Arial Narrow',Arial,sans-serif}
+.pnl-nums{display:grid;grid-template-columns:repeat(9,1fr);gap:2px}
+
+/* Number bubble */
+.nb{
+  aspect-ratio:1;border-radius:50%;
+  border:0.75px solid #C4C4C4;
+  display:flex;align-items:center;justify-content:center;
+  font-size:7.5px;font-weight:700;color:#2A2A2A;
+  font-family:'Arial Narrow',Arial,sans-serif;
+  line-height:1;cursor:default;
+}
+@keyframes nbPop{
+  0%{transform:scale(0.1);opacity:0}
+  60%{transform:scale(1.2)}
+  100%{transform:scale(1);opacity:1}
+}
+.nb.on{
+  background:var(--coral);border-color:var(--coral);color:#fff;
+  animation:nbPop 0.22s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+/* Panel footer */
+.pnl-ft{display:flex;gap:3px;justify-content:flex-end;padding-top:2px}
+.pnl-qp,.pnl-void{font-size:6.5px;font-weight:700;border-radius:2px;padding:1.5px 6px;font-family:'Arial Narrow',Arial,sans-serif}
+.pnl-qp{border:1px solid var(--coral);color:var(--coral)}
+.pnl-void{border:1px solid #C8C8C8;color:#BBBBBB}
+
+/* Right coral sidebar */
+.tr{
+  width:48px;flex-shrink:0;
+  background:var(--coral);
+  border-left:1.5px solid #ADADAD;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:space-between;
+  padding:8px 0 10px;
+  gap:6px;
+}
+.tr-logo{width:32px;height:32px;flex-shrink:0}
+.tr-toto{
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  font-family:Arial,sans-serif;
+  font-size:20px;font-weight:700;
+  color:#fff;letter-spacing:0.1em;
+  flex:1;display:flex;align-items:center;justify-content:center;
+}
+.tr-tagline{
+  writing-mode:vertical-rl;
+  text-orientation:mixed;
+  transform:rotate(180deg);
+  font-family:Arial,sans-serif;
+  font-size:5.5px;color:rgba(255,255,255,0.65);
+  letter-spacing:0.08em;line-height:1.3;
+  text-align:center;padding:0 3px;
+}
+
+/* ── COMMENTARY ── */
+.commentary{min-height:48px;margin-bottom:4px}
+.cm-q{font-family:'Inter',sans-serif;font-size:14px;font-style:italic;color:rgba(29,37,64,0.58);opacity:0;transform:translateY(7px);transition:opacity 0.5s ease,transform 0.5s ease;margin-bottom:7px}
+.cm-q.vis{opacity:1;transform:translateY(0)}
+.cm-m{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(29,37,64,0.28);opacity:0;transition:opacity 0.4s ease 0.28s}
+.cm-m.vis{opacity:1}
+
+/* ── FOOTER ── */
+.pg-ft{margin-top:48px;padding:18px 0 64px;border-top:1px solid var(--light);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:rgba(29,37,64,0.25);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.pg-ft a{color:rgba(29,37,64,0.35);text-decoration:underline;text-underline-offset:3px}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  nav{padding-left:24px;padding-right:24px;gap:12px}
+  .wrap{padding-left:24px;padding-right:24px}
+  .pg-title{font-size:clamp(22px,7vw,34px)}
+  .nav-icons{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="index.html" class="nav-name">Matthew Ho <em>—</em></a>
+  <div class="nav-spacer"></div>
+  <a href="index.html" class="nav-back"><span class="nav-back-arrow">←</span> Back to Site</a>
+  <div class="nav-icons">
+    <a id="nav-li" href="#" target="_blank" rel="noopener" class="nav-icon" aria-label="LinkedIn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+    </a>
+    <a id="nav-em" href="#" class="nav-icon" aria-label="Email">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg>
+    </a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <p class="pg-eyebrow">Lucky Numbers Generator</p>
+  <h1 class="pg-title">The odds are 1 in 13,983,816.<br><em>I've seen worse briefs.</em></h1>
+  <p class="pg-sub">Six panels. Forty-nine numbers. One shot at early retirement — or at least a good story for the next pitch. Quick Pick does the thinking. You do the hoping.</p>
+
+  <div class="btn-row">
+    <button class="btn-qp" id="btn-qp">Quick Pick</button>
+    <button class="btn-clear" id="btn-clear">Clear All</button>
+    <button class="btn-copy" id="btn-copy">Copy Numbers</button>
+  </div>
+
+  <div class="ticket-scroll">
+    <div class="ticket">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="tl">
+        <div class="tl-hd">System<br>Roll &amp;<br>Group</div>
+        <div class="tl-body">
+          <div class="cb-row" id="row-sys7"><input type="checkbox" id="cb-sys7"> Sys 7</div>
+          <div class="cb-row" id="row-sys8"><input type="checkbox" id="cb-sys8"> Sys 8</div>
+          <div class="cb-row" id="row-sys9"><input type="checkbox" id="cb-sys9"> Sys 9</div>
+          <div class="cb-row" id="row-sys10"><input type="checkbox" id="cb-sys10"> Sys 10</div>
+          <div class="cb-row" id="row-sys11"><input type="checkbox" id="cb-sys11"> Sys 11</div>
+          <div class="cb-row" id="row-sys12"><input type="checkbox" id="cb-sys12"> Sys 12</div>
+          <div class="cb-row" id="row-roll"><input type="checkbox" id="cb-roll"> Sys Roll</div>
+          <div class="tl-sep">
+            <div class="cb-row" id="row-2d"><input type="checkbox" id="cb-2d"> 2 Draws</div>
+            <div class="cb-row" id="row-4d"><input type="checkbox" id="cb-4d"> 4 Draws</div>
+            <div class="cb-row active" id="row-grp"><input type="checkbox" id="cb-grp"> Group TOTO</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANELS -->
+      <div class="tm">
+        <div class="tm-instr">Mark the numbers you wish to select or choose QP (Quick Pick). Select 6 numbers from 1 to 49 for each panel. Each board costs $1.00.</div>
+        <div class="panels" id="panels"></div>
+      </div>
+
+      <!-- RIGHT SIDEBAR -->
+      <div class="tr">
+        <svg class="tr-logo" viewBox="0 0 32 32" fill="none">
+          <circle cx="16" cy="16" r="15.25" fill="white" stroke="#E8604C" stroke-width="0.5"/>
+          <circle cx="16" cy="16" r="10" fill="none" stroke="#E8604C" stroke-width="2"/>
+          <circle cx="16" cy="16" r="4" fill="#E8604C"/>
+          <line x1="16" y1="5" x2="16" y2="11" stroke="#E8604C" stroke-width="2" stroke-linecap="round"/>
+          <line x1="16" y1="21" x2="16" y2="27" stroke="#E8604C" stroke-width="2" stroke-linecap="round"/>
+          <line x1="5" y1="16" x2="11" y2="16" stroke="#E8604C" stroke-width="2" stroke-linecap="round"/>
+          <line x1="21" y1="16" x2="27" y2="16" stroke="#E8604C" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div class="tr-toto">TOTO</div>
+        <div class="tr-tagline">Please save the trees. Use only what you need.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="commentary">
+    <div class="cm-q" id="cm-q"></div>
+    <div class="cm-m" id="cm-m"></div>
+  </div>
+
+  <div class="pg-ft">
+    <span>For entertainment only &nbsp;·&nbsp; TOTO jackpot odds: 1 in 13,983,816 &nbsp;·&nbsp; Please gamble responsibly</span>
+    <a href="index.html">← Portfolio</a>
+  </div>
+
+</div>
+
+<script src=”data.js”></script>
+<script>
+(function(){
+  // ── Read from data.js if available ──
+  const TP = (typeof PORTFOLIO_DATA !== 'undefined' && PORTFOLIO_DATA.totoPage) || {};
+  const D  = (typeof PORTFOLIO_DATA !== 'undefined') ? PORTFOLIO_DATA : {};
+
+  // Populate page copy
+  if(TP.eyebrow)  document.querySelector('.pg-eyebrow').textContent = TP.eyebrow;
+  if(TP.title)    document.querySelector('.pg-title').innerHTML     = TP.title;
+  if(TP.subtitle) document.querySelector('.pg-sub').textContent    = TP.subtitle;
+
+  // Nav icons
+  if(D.linkedin){ const el=document.getElementById('nav-li'); if(el) el.href = D.linkedin; }
+  if(D.email)   { const el=document.getElementById('nav-em'); if(el) el.href = 'mailto:' + D.email; }
+
+  // Nav scroll state
+  window.addEventListener('scroll', ()=>{
+    document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 10);
+  }, {passive:true});
+
+  const PANELS = ['A','B','C','D','E','F'];
+  const QUIPS  = (TP.quips && TP.quips.length) ? TP.quips : [
+    “Statistically, you have better odds of winning a Cannes Grand Prix.”,
+    “Six numbers locked. No revisions. First time for everything.”,
+    “In advertising, we call this a long-term awareness play.”,
+    “The brief was: pick six. The only brief no client has ever changed.”,
+    “If this wins, I'm flying to France. For Cannes. Obviously.”,
+    “Odds: 1 in 13,983,816. Still better than first-round client approval.”,
+    “Numbers filed. Now we wait — same feeling as post-submission.”,
+    “Ten years of picking the right words. Numbers are somehow harder.”,
+    “Singapore dreaming. Six panels at a time. Results in 4–6 business days.”,
+    “The ROI here is speculative, but the brand experience is exceptional.”,
+    “Filed under: long-term investment, niche target audience, zero media budget.”,
+    “No strategy deck required. Pure instinct. God help us.”,
+    “My creative director would call this 'owning the whitespace.'”,
+    “A fully integrated six-panel campaign with zero client touchpoints.”,
+    “Committed to all six. No overthinking. A new personal best.”
+  ];
+
+  // ── Instruction text per bet type ──
+  const INSTR = {
+    ordinary: 'Mark the numbers you wish to select or choose QP (Quick Pick). Select 6 numbers from 1 to 49 for each panel. Each board costs $1.00.',
+    roll: 'Select 5 numbers from 1 to 49 for each panel. The 6th number rolls through all remaining 44 — each board covers 44 Ordinary Entry combinations.',
+    7:  'Select 7 numbers from 1 to 49 for each panel. Your 7 numbers generate 7 Ordinary Entry combinations.',
+    8:  'Select 8 numbers from 1 to 49 for each panel. Your 8 numbers generate 28 Ordinary Entry combinations.',
+    9:  'Select 9 numbers from 1 to 49 for each panel. Your 9 numbers generate 84 Ordinary Entry combinations.',
+    10: 'Select 10 numbers from 1 to 49 for each panel. Your 10 numbers generate 210 Ordinary Entry combinations.',
+    11: 'Select 11 numbers from 1 to 49 for each panel. Your 11 numbers generate 462 Ordinary Entry combinations.',
+    12: 'Select 12 numbers from 1 to 49 for each panel. Your 12 numbers generate 924 Ordinary Entry combinations.',
+  };
+
+  // ── Sidebar config ──
+  const SYS_OPTIONS = [
+    { id:'cb-sys7',  row:'row-sys7',  type:7  },
+    { id:'cb-sys8',  row:'row-sys8',  type:8  },
+    { id:'cb-sys9',  row:'row-sys9',  type:9  },
+    { id:'cb-sys10', row:'row-sys10', type:10 },
+    { id:'cb-sys11', row:'row-sys11', type:11 },
+    { id:'cb-sys12', row:'row-sys12', type:12 },
+    { id:'cb-roll',  row:'row-roll',  type:'roll' },
+  ];
+  const DRAW_OPTIONS = [
+    { id:'cb-2d', row:'row-2d', days:2 },
+    { id:'cb-4d', row:'row-4d', days:4 },
+  ];
+
+  // ── State ──
+  let draws     = 0;
+  let busy      = false;
+  let betType   = 'ordinary'; // 'ordinary' | 'roll' | 7–12
+  let drawDays  = 1;
+  let groupToto = true;
+  let current   = {};
+  PANELS.forEach(p => { current[p] = []; });
+
+  const qBtn  = document.getElementById('btn-qp');
+  const cBtn  = document.getElementById('btn-clear');
+  const cpBtn = document.getElementById('btn-copy');
+
+  // ── Helpers ──
+  function pickCount(){
+    if(betType === 'roll') return 5;
+    if(betType === 'ordinary') return 6;
+    return betType; // numeric 7–12
+  }
+
+  function pnlTypeLabel(){
+    if(betType === 'ordinary') return 'Ordinary Entry';
+    if(betType === 'roll')     return 'System Roll';
+    return `System ${betType}`;
+  }
+
+  function updateUI(){
+    document.querySelector('.tm-instr').textContent = INSTR[betType];
+    document.querySelectorAll('.pnl-type').forEach(el => { el.textContent = pnlTypeLabel(); });
+    SYS_OPTIONS.forEach(opt => {
+      document.getElementById(opt.id).checked = opt.type === betType;
+      document.getElementById(opt.row).classList.toggle('active', opt.type === betType);
+    });
+  }
+
+  // ── Build panels ──
+  const panelsEl = document.getElementById('panels');
+  PANELS.forEach(p => {
+    const d = document.createElement('div');
+    d.className = 'panel';
+    d.innerHTML = `<div class=”pnl-hdr”><span class=”pnl-id”>${p}</span><span class=”pnl-type”>Ordinary Entry</span></div>`;
+    const g = document.createElement('div');
+    g.className = 'pnl-nums';
+    for(let n = 1; n <= 49; n++){
+      const nb = document.createElement('div');
+      nb.className = 'nb';
+      nb.id = `nb-${p}-${n}`;
+      nb.textContent = n;
+      g.appendChild(nb);
+    }
+    d.appendChild(g);
+    d.insertAdjacentHTML('beforeend','<div class=”pnl-ft”><div class=”pnl-qp”>QP</div><div class=”pnl-void”>VOID</div></div>');
+    panelsEl.appendChild(d);
+  });
+
+  // ── Pick N random numbers ──
+  function pickN(){
+    const n    = pickCount();
+    const pool = Array.from({length:49},(_,i)=>i+1);
+    const out  = [];
+    while(out.length < n){
+      const i = Math.floor(Math.random()*pool.length);
+      out.push(pool.splice(i,1)[0]);
+    }
+    return out.sort((a,b)=>a-b);
+  }
+
+  // ── Clear all ──
+  function clearAll(){
+    if(busy) return;
+    PANELS.forEach(p=>{
+      current[p] = [];
+      for(let n=1;n<=49;n++){
+        const el = document.getElementById(`nb-${p}-${n}`);
+        if(el) el.classList.remove('on');
+      }
+    });
+    const q=document.getElementById('cm-q'), m=document.getElementById('cm-m');
+    q.classList.remove('vis'); m.classList.remove('vis');
+    cpBtn.classList.remove('show','ok');
+    cpBtn.textContent = 'Copy Numbers';
+  }
+
+  // ── Quick Pick ──
+  function quickPick(){
+    if(busy) return;
+    clearAll();
+    busy=true; draws++;
+    qBtn.disabled=true;
+
+    const sets={};
+    PANELS.forEach(p=>{ sets[p]=pickN(); current[p]=sets[p]; });
+
+    const lastDelay = (pickCount()-1)*110;
+    PANELS.forEach(p=>{
+      sets[p].forEach((num,i)=>{
+        setTimeout(()=>{
+          const el=document.getElementById(`nb-${p}-${num}`);
+          if(!el) return;
+          el.classList.remove('on');
+          void el.offsetWidth;
+          el.classList.add('on');
+        }, i*110);
+      });
+    });
+
+    setTimeout(()=>{
+      busy=false;
+      qBtn.disabled=false;
+      showQuip();
+      cpBtn.classList.add('show');
+    }, lastDelay+260);
+  }
+
+  // ── Quip ──
+  function showQuip(){
+    const q=document.getElementById('cm-q'), m=document.getElementById('cm-m');
+    q.textContent='”'+QUIPS[(draws-1)%QUIPS.length]+'” — Matt';
+    m.textContent=`Quick pick #${draws}`;
+    q.classList.remove('vis'); m.classList.remove('vis');
+    void q.offsetWidth;
+    q.classList.add('vis'); m.classList.add('vis');
+  }
+
+  // ── Copy ──
+  function copyNumbers(){
+    const lines = PANELS.map(p =>
+      `${p}.  ${current[p].map(n => String(n).padStart(2,' ')).join('  ')}`
+    );
+    const text = `TOTO Quick Pick #${draws}\n${lines.join('\n')}\n\nGenerated on matthewho.work`;
+    navigator.clipboard.writeText(text).then(()=>{
+      cpBtn.textContent = 'Copied ✓';
+      cpBtn.classList.add('ok');
+      setTimeout(()=>{ cpBtn.textContent='Copy Numbers'; cpBtn.classList.remove('ok'); }, 2000);
+    }).catch(()=>{
+      cpBtn.textContent = 'Copy failed';
+      setTimeout(()=>{ cpBtn.textContent='Copy Numbers'; }, 2000);
+    });
+  }
+
+  // ── Sidebar: bet type (mutually exclusive, clicking active → back to ordinary) ──
+  SYS_OPTIONS.forEach(opt => {
+    document.getElementById(opt.row).addEventListener('click', ()=>{
+      betType = (betType === opt.type) ? 'ordinary' : opt.type;
+      clearAll();
+      updateUI();
+    });
+  });
+
+  // ── Sidebar: draw days (mutually exclusive toggle) ──
+  DRAW_OPTIONS.forEach(opt => {
+    document.getElementById(opt.row).addEventListener('click', ()=>{
+      const alreadyOn = drawDays === opt.days;
+      DRAW_OPTIONS.forEach(o => {
+        document.getElementById(o.id).checked = false;
+        document.getElementById(o.row).classList.remove('active');
+      });
+      drawDays = alreadyOn ? 1 : opt.days;
+      if(!alreadyOn){
+        document.getElementById(opt.id).checked = true;
+        document.getElementById(opt.row).classList.add('active');
+      }
+    });
+  });
+
+  // ── Sidebar: Group TOTO toggle ──
+  document.getElementById('row-grp').addEventListener('click', ()=>{
+    groupToto = !groupToto;
+    document.getElementById('cb-grp').checked = groupToto;
+    document.getElementById('row-grp').classList.toggle('active', groupToto);
+  });
+
+  // Init Group TOTO as checked
+  document.getElementById('cb-grp').checked = true;
+
+  // ── Button listeners ──
+  qBtn.addEventListener('click', quickPick);
+  cBtn.addEventListener('click', clearAll);
+  cpBtn.addEventListener('click', copyNumbers);
+})();
+</script>
+</body>
+</html>

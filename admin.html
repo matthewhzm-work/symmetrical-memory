@@ -218,6 +218,8 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
       <div class="sb-item" onclick="showSec('projects',this)">Work Projects</div>
       <div class="sb-item" onclick="showSec('experience',this)">Experience</div>
       <div class="sb-item" onclick="showSec('awards',this)">Awards</div>
+      <div class="sb-section">Pages</div>
+      <div class="sb-item" onclick="showSec('toto',this)">TOTO Page</div>
       <div class="sb-section">Publish</div>
       <div class="sb-item" onclick="showSec('export',this)">Export &amp; Download</div>
     </nav>
@@ -385,6 +387,30 @@ body{background:var(--paper);font-family:var(--body);font-size:14px;color:var(--
       </div>
     </div>
 
+    <!-- TOTO PAGE -->
+    <div id="sec-toto" class="cms-sec">
+      <h1 class="pg-title">TOTO<em>.</em></h1>
+      <p class="pg-desc">Edit the eyebrow, headline and subtitle for the TOTO Lucky Pick page. Manage the rotating quotes below — they appear after every Quick Pick.</p>
+      <div class="card">
+        <div class="card-head"><span class="card-label">Page Headlines</span></div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="fg"><label>Eyebrow</label><input type="text" id="tt-eyebrow" placeholder="Lucky Numbers Generator"></div>
+          <div class="fg"><label>Title HTML — use &lt;br&gt; for line break, &lt;em&gt; for red accent</label><textarea id="tt-title" style="min-height:60px" placeholder="The odds are 1 in 13,983,816.&lt;br&gt;&lt;em&gt;I've seen worse briefs.&lt;/em&gt;"></textarea></div>
+          <div class="fg"><label>Subtitle</label><textarea id="tt-subtitle" style="min-height:80px"></textarea></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head">
+          <span class="card-label">Quick Pick Quotes</span>
+          <button class="btn btn-secondary btn-sm" onclick="addQuip()">+ Add Quote</button>
+        </div>
+        <div id="quips-list"></div>
+      </div>
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="saveToto()">Save TOTO Page</button>
+      </div>
+    </div>
+
     <!-- EXPORT -->
     <div id="sec-export" class="cms-sec">
       <h1 class="pg-title">Export<em>.</em></h1>
@@ -506,6 +532,7 @@ window.showSec = function(key, el){
     projects:   ()=>{ renderList(); closeEditor(); },
     experience: renderExp,
     awards:     renderAwards,
+    toto:       renderToto,
     export:     doExport
   })[key]?.();
 };
@@ -1501,6 +1528,7 @@ function flushAll(){
   flushBioFromDOM();
   flushExpFromDOM();
   flushAwardsFromDOM();
+  flushTotoFromDOM();
   /* Only flush the project editor when it is actively open.
      Checking both editIdx and the editor's inline display prevents
      stale editor DOM from overwriting the wrong project after a reorder. */
@@ -1509,6 +1537,80 @@ function flushAll(){
     && $('view-editor').style.display !== 'none';
   if(editorOpen) flushProjectFromDOM();
 }
+
+/* ═══════════════════════════════════════
+   TOTO PAGE
+═══════════════════════════════════════ */
+function renderToto(){
+  const t = S.totoPage || {};
+  $('tt-eyebrow').value  = t.eyebrow  || '';
+  $('tt-title').value    = t.title    || '';
+  $('tt-subtitle').value = t.subtitle || '';
+  renderQuips();
+}
+
+function renderQuips(){
+  const quips = (S.totoPage && S.totoPage.quips) || [];
+  if(!quips.length){
+    $('quips-list').innerHTML = '<p style="font-size:13px;color:var(--mid);padding:8px 0">No quotes yet. Click + Add Quote to get started.</p>';
+    return;
+  }
+  $('quips-list').innerHTML = quips.map((q,i) => `
+    <div class="list-item" id="quip-row-${i}">
+      <span class="li-order" style="min-width:22px">${i+1}</span>
+      <input type="text" id="quip-${i}" value="${escA(q)}"
+        style="flex:1;padding:8px 11px;border:1.5px solid var(--light);font-family:var(--body);font-size:13px;color:var(--ink);background:var(--paper);outline:none;border-radius:0"
+        onfocus="this.style.borderColor='var(--red)'"
+        onblur="this.style.borderColor='var(--light)'">
+      <button class="btn btn-secondary btn-sm" onclick="moveQuip(${i},-1)"${i===0?' disabled':''}>↑</button>
+      <button class="btn btn-secondary btn-sm" onclick="moveQuip(${i},1)"${i===quips.length-1?' disabled':''}>↓</button>
+      <button class="btn btn-danger btn-sm" onclick="removeQuip(${i})">✕</button>
+    </div>`).join('');
+}
+
+function flushTotoFromDOM(){
+  if(!$('tt-eyebrow')) return;
+  if(!S.totoPage) S.totoPage = {};
+  S.totoPage.eyebrow  = $('tt-eyebrow').value.trim();
+  S.totoPage.title    = $('tt-title').value.trim();
+  S.totoPage.subtitle = $('tt-subtitle').value.trim();
+  const quips = (S.totoPage.quips || []);
+  quips.forEach((_,i) => {
+    const inp = $('quip-'+i);
+    if(inp) quips[i] = inp.value.trim();
+  });
+  S.totoPage.quips = quips.filter(q => q);
+}
+
+window.saveToto = ()=>{
+  flushTotoFromDOM();
+  toast('TOTO page saved — generate data.js to publish.');
+};
+
+window.addQuip = ()=>{
+  flushTotoFromDOM();
+  if(!S.totoPage)       S.totoPage       = {};
+  if(!S.totoPage.quips) S.totoPage.quips = [];
+  S.totoPage.quips.push('');
+  renderQuips();
+  const last = S.totoPage.quips.length - 1;
+  setTimeout(() => { const el = $('quip-'+last); if(el) el.focus(); }, 40);
+};
+
+window.removeQuip = i => {
+  flushTotoFromDOM();
+  S.totoPage.quips.splice(i, 1);
+  renderQuips();
+};
+
+window.moveQuip = (i, dir) => {
+  flushTotoFromDOM();
+  const qs = S.totoPage.quips;
+  const j  = i + dir;
+  if(j < 0 || j >= qs.length) return;
+  [qs[i], qs[j]] = [qs[j], qs[i]];
+  renderQuips();
+};
 
 /* ═══════════════════════════════════════
    EXPORT + DOWNLOAD
