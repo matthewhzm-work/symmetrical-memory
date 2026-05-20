@@ -3,11 +3,15 @@
 ## Project Overview
 Personal portfolio site for Matthew Ho, Senior Creative (Copywriter · Strategist · Campaign Lead), based in Singapore. Built in vanilla HTML/CSS/JS — no frameworks, no build tools. Deployed on GitHub Pages at matthewho.work.
 
+## Resume
+`resume.html` — ATS-friendly resume page. Pulls all content (name, tagline, bio, experience, awards) live from `data.js`. Accessible at matthewho.work/resume.html. Has a browser-print "Save as PDF" button. No Claude/AI attribution anywhere in this file or its commit.
+
 ## File Structure
 - `index.html` — Homepage: 3-column independent flex grid, About section, Recognition section
 - `work.html` — All project pages (single file, block-based renderer + legacy template fallback)
 - `admin.html` — Password-protected CMS
 - `data.js` — Single source of truth for all content. Exposes `PORTFOLIO_DATA` global.
+- `resume.html` — ATS-friendly resume, data-driven from data.js, print-to-PDF ready
 - `images/` — All processed images as WebP (80% quality, 2400px max) or optimised GIF
 
 ## Design System
@@ -81,6 +85,8 @@ Desktop: ‹ › arrow buttons. Mobile: swipe only (buttons hidden).
 - GIFs preserved as-is (animated), optimised with gifsicle --lossy=80 --colors 128
 - Thumbnails for cards: 1400×900px landscape WebP or GIF
 - All images go in images/[project-id]/ folder
+- GIF background colour replacement: use Python + numpy (exact pixel match). sips cannot write WebP; use PIL/Pillow instead. PyMuPDF (fitz) available for PDF text extraction.
+- Site paper colour is `#FFFAF0` — all GIF backgrounds should match this, not the old `#F5F4EF`
 
 ## Phone Number
 REMOVED everywhere — do not add it back to any file.
@@ -107,6 +113,15 @@ The following projects are hidden (active:false) and need bespoke blocks when Ma
 - vivo-v15 (active, has blocks — social films are 4:5 ratio, currently rendered as 16:9)
 - volkswagen-prints (active, has blocks)
 
+## Anchored Festival Strip (index.html)
+On desktop (> 900px wide), the award festival strip (`#fest`) is fixed to the bottom of the viewport on initial page load. The about section bio is vertically centred in the remaining space. A double-chevron scroll indicator (`#scroll-indicator`) sits just above the strip. On scroll, the strip releases at the exact position where its natural document position aligns with its fixed position (zero jump). The about section padding transitions smoothly back to natural CSS values.
+
+Key JS functions: `festSetup()` (called on `window.load`), `festRelease()` (called when `scrollY >= festReleaseAt`).
+- `festAnchored` flag — guards `fixAboutPad()` from clearing inline padding while in fixed mode
+- `festPh` — placeholder div inserted after `#fest` to preserve document flow
+- `festReleaseAt` — calculated as `naturalFestTop - (vp - festH)`, the scroll position where positions align
+- Does NOT run on mobile (≤ 900px) — `fixAboutPad()` handles mobile padding separately
+
 ## Key Rules
 1. Never use oninput closures for save logic — always read from DOM by ID on save
 2. Never put variable references in inline onclick strings — use LB_POOLS string keys
@@ -119,3 +134,4 @@ The following projects are hidden (active:false) and need bespoke blocks when Ma
 9. Block IDs must be unique across all projects in data.js
 10. **Any direct code edit to a project's page content (copy, layout, assets) must also be reflected in that project's blocks[] array in data.js so the CMS stays in sync.** Do not patch work.html templates or hardcode content that bypasses the block system.
 11. Never document passwords or credentials in this file or any tracked file in the repo.
+12. resume.html must never contain AI/Claude attribution — neither in code comments nor commit messages.
