@@ -2156,9 +2156,9 @@ const PORTFOLIO_DATA = {
     "subtitle": "If you're reading this, either I'm getting lucky with a job, or you're getting lucky with a win. Give it a shot — worst case, you still have a great portfolio to look at.",
     "quips": [
       "Statistically, you have better odds of winning a Cannes Grand Prix.",
-      "If you don't like it, then get like an awards-hungry-hippo and try again.",
+      "If you don't like these numbers, then get like an awards-hungry-hippo and try again.",
       "Like some of my ECDs love to say...'just whack ah'.",
-      "Not financial advice. But also not not financial advice.",
+      "BUY IT. Not financial advice. But also not not financial advice.",
       "If you win, don't forget me.",
       "Odds: 1 in 13,983,816. Still better than first-round client approval.",
       "Statistically improbable. Emotionally essential.",
