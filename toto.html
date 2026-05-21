@@ -49,8 +49,10 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
 .btn-copy.show{display:flex}
 .btn-copy.ok{color:var(--mid);border-color:var(--mid)}
 
-/* ── INSTRUCTIONS (portfolio layer) ── */
-.tk-instr{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--light);margin-bottom:8px;line-height:1.6}
+/* ── DRAW BADGE ── */
+.draw-row{display:flex;justify-content:flex-end;margin-bottom:12px}
+.draw-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;background:var(--red);color:var(--paper);padding:4px 10px;white-space:nowrap}
+@media(max-width:768px){.draw-row{padding-right:20px}}
 
 /* ── TICKET SCROLL (desktop) ── */
 .ticket-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:6px;margin-bottom:30px}
@@ -77,7 +79,6 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
 
 /* Main area */
 .tm{flex:1;padding:5px 6px 5px 5px;display:flex;flex-direction:column;gap:4px;min-width:0}
-.tm-instr{font-size:8px;color:#666;border-bottom:1px solid #E8E8E8;padding-bottom:5px;margin-bottom:3px;line-height:1.45;font-family:'Arial Narrow',Arial,sans-serif}
 
 /* 3x2 panel grid */
 .panels{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4px;flex:1}
@@ -158,7 +159,7 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
   nav{padding-left:20px;padding-right:20px;gap:10px}
   nav .nav-icons{display:none}
   .wrap{padding-left:0;padding-right:0}
-  .pg-eyebrow,.pg-title,.pg-sub,.btn-row,.tk-instr,.commentary,.pg-ft{padding-left:20px;padding-right:20px}
+  .pg-eyebrow,.pg-title,.pg-sub,.btn-row,.pg-ft{padding-left:20px;padding-right:20px}
   .pg-title{font-size:clamp(22px,7vw,34px)}
   .ticket-scroll{display:none}
   .mob-outer{display:block}
@@ -193,8 +194,8 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
     <button class="btn-copy" id="btn-copy">Copy Numbers</button>
   </div>
 
-  <p class="tk-instr" id="tk-instr">Mark six numbers per board.</p>
   <div class="cm-q" id="cm-q"></div>
+  <div class="draw-row"><span class="draw-badge" id="draw-badge"></span></div>
 
   <!-- ── DESKTOP TICKET ── -->
   <div class="ticket-scroll">
@@ -219,8 +220,7 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
       </div>
 
       <div class="tm">
-        <div class="tm-instr" id="tm-instr">Mark the numbers you wish to select or choose QP (Quick Pick). Select 6 numbers from 1 to 49 for each panel. Each board costs $1.00.</div>
-        <div class="panels" id="panels"></div>
+<div class="panels" id="panels"></div>
       </div>
 
       <div class="tr">
@@ -300,6 +300,29 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
   window.addEventListener('scroll',function(){
     document.getElementById('main-nav').classList.toggle('scrolled',window.scrollY>10);
   },{passive:true});
+
+  /* ── Next draw badge ── */
+  (function(){
+    var DAYS   = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+    var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var sgtMs  = Date.now() + 8*3600000 - (new Date().getTimezoneOffset()*60000);
+    var sgt    = new Date(sgtMs);
+    var day    = sgt.getUTCDay();
+    var h      = sgt.getUTCHours();
+    var m      = sgt.getUTCMinutes();
+    var before630 = (h < 18) || (h === 18 && m < 30);
+    var drawMs;
+    if((day===1||day===4) && before630){
+      drawMs = sgtMs;
+    } else {
+      var ahead=1;
+      while(ahead<=7){ var nd=(day+ahead)%7; if(nd===1||nd===4) break; ahead++; }
+      drawMs = sgtMs + ahead*86400000;
+    }
+    var d = new Date(drawMs);
+    var badge = document.getElementById('draw-badge');
+    if(badge) badge.textContent = 'Next Draw · '+DAYS[d.getUTCDay()]+' '+d.getUTCDate()+' '+MONTHS[d.getUTCMonth()]+' · 6.30pm';
+  })();
 
   /* ── Constants ── */
   var PANELS = ['A','B','C','D','E','F'];
@@ -461,30 +484,6 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
     var label=pnlTypeLabel();
     var ptEls=document.querySelectorAll('.pnl-type,.mob-pnl-type');
     for(var i=0;i<ptEls.length;i++) ptEls[i].textContent=label;
-    /* Ticket instruction */
-    var tmInstr=document.getElementById('tm-instr');
-    if(tmInstr) tmInstr.textContent=buildTicketInstr();
-    /* Instructions above ticket */
-    updateInstr();
-  }
-
-  function buildTicketInstr(){
-    if(betType==='ordinary') return 'Mark the numbers you wish to select or choose QP (Quick Pick). Select 6 numbers from 1 to 49 for each panel. Each board costs $1.00.';
-    if(betType==='roll')     return 'Select 5 numbers for each panel. The 6th number (Sys Roll) plays all remaining 44 numbers automatically.';
-    return 'Select '+WORD[betType]+' numbers for each panel. System '+betType+' generates multiple Ordinary Entry combinations.';
-  }
-
-  function updateInstr(){
-    var base;
-    if(betType==='ordinary') base='Mark six numbers per board.';
-    else if(betType==='roll') base='Mark five numbers. The sixth is a System Roll — all remaining numbers play automatically.';
-    else base='Mark '+WORD[betType]+' numbers per board.';
-    var suffix='';
-    if(drawDays===2) suffix+=' Bet covers two consecutive draws.';
-    if(drawDays===4) suffix+=' Bet covers four consecutive draws.';
-    if(groupToto)    suffix+=' Group TOTO selected — bet will be divided among group members.';
-    var el=document.getElementById('tk-instr');
-    if(el) el.textContent=base+suffix;
   }
 
   /* ── Clear numbers only ── */
