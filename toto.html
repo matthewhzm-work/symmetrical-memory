@@ -31,13 +31,13 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
 .wrap{max-width:1320px;margin:0 auto;padding:0 60px;padding-top:68px}
 
 /* ── PAGE HEADER ── */
-.pg-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(29,37,64,.38);margin-top:clamp(10px,3.5vh,52px);margin-bottom:clamp(4px,0.8vh,14px)}
-.pg-title{font-family:'Lexend',sans-serif;font-size:clamp(22px,min(3.8vw,4.2vh),50px);font-weight:700;letter-spacing:-.025em;line-height:1.06;margin-bottom:clamp(4px,0.8vh,14px)}
+.pg-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(29,37,64,.38);margin-top:52px;margin-bottom:14px}
+.pg-title{font-family:'Lexend',sans-serif;font-size:clamp(26px,3.8vw,50px);font-weight:700;letter-spacing:-.025em;line-height:1.06;margin-bottom:14px}
 .pg-title em{color:var(--red);font-style:normal}
-.pg-sub{font-size:clamp(11px,1.5vh,14.5px);color:rgba(29,37,64,.58);line-height:1.6;margin-bottom:clamp(8px,2.2vh,36px)}
+.pg-sub{font-size:14.5px;color:rgba(29,37,64,.58);line-height:1.72;margin-bottom:36px}
 
 /* ── BUTTONS ── */
-.btn-row{display:flex;gap:12px;align-items:center;margin-bottom:clamp(6px,1.2vh,18px);flex-wrap:wrap}
+.btn-row{display:flex;gap:12px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
 .btn-qp{font-family:'Lexend',sans-serif;font-size:13px;font-weight:700;letter-spacing:.04em;background:var(--red);color:var(--paper);border:none;padding:12px 30px;cursor:pointer;transition:transform .2s cubic-bezier(.22,1,.36,1)}
 .btn-qp:hover{transform:translateY(-4px)}
 .btn-qp:active{transform:translateY(0)}
@@ -50,7 +50,7 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
 .btn-copy.ok{color:var(--mid);border-color:var(--mid)}
 
 /* ── DRAW ROW (quip left · badge right) ── */
-.draw-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:clamp(4px,0.8vh,12px)}
+.draw-row{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:12px}
 .draw-badge{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.06em;line-height:1.4;background:var(--red);color:var(--paper);padding:4px 10px;white-space:nowrap;flex-shrink:0}
 @media(max-width:768px){.draw-row{padding-left:20px;padding-right:20px}}
 
@@ -78,18 +78,18 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
 .tl-row.active .cb-box{background:#E8604C}
 
 /* Main area */
-.tm{flex:1;padding:5px 6px 5px 5px;display:flex;flex-direction:column;gap:4px;min-width:0;min-height:0}
+.tm{flex:1;padding:5px 6px 5px 5px;display:flex;flex-direction:column;gap:4px;min-width:0}
 
 /* 3x2 panel grid */
-.panels{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4px;flex:1;min-height:0}
-.panel{border:1px solid #C0C0C0;padding:3px 3px 4px;display:flex;flex-direction:column;gap:2px;min-height:0}
+.panels{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:4px;flex:1}
+.panel{border:1px solid #C0C0C0;padding:3px 3px 4px;display:flex;flex-direction:column;gap:2px}
 .pnl-hdr{display:flex;justify-content:space-between;align-items:baseline;padding-bottom:3px;border-bottom:1px solid #EBEBEB;margin-bottom:2px}
 .pnl-id{font-size:13px;font-weight:700;color:#E8604C;font-family:'Arial Narrow',Arial,sans-serif}
 .pnl-type{font-size:7.5px;color:#AAA;font-family:'Arial Narrow',Arial,sans-serif}
 
 /* Number grid — rows of 9 */
-.pnl-nums{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;flex:1;min-height:0}
-.nb{aspect-ratio:1;border-radius:50%;border:1px solid #C8C8C8;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#2A2A2A;font-family:'Arial Narrow',Arial,sans-serif;line-height:1;position:relative;width:100%}
+.pnl-nums{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;flex:1}
+.nb{aspect-ratio:1;border-radius:50%;border:1px solid #C8C8C8;display:flex;align-items:center;justify-content:center;font-size:8.5px;font-weight:700;color:#2A2A2A;font-family:'Arial Narrow',Arial,sans-serif;line-height:1;position:relative}
 @keyframes nbPop{0%{transform:scale(.1);opacity:0}65%{transform:scale(1.22)}100%{transform:scale(1);opacity:1}}
 .nb.on{background:#E8604C;border-color:#E8604C;color:#fff;animation:nbPop .22s cubic-bezier(.34,1.56,.64,1) both}
 .nb.roll-nb{background:#fff;border:1.5px solid #E8604C;color:#E8604C;animation:nbPop .22s cubic-bezier(.34,1.56,.64,1) both}
@@ -119,7 +119,7 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
 /* ════════════════════════════════════════════
    MOBILE TICKET
    ════════════════════════════════════════════ */
-.mob-outer{display:none;margin-bottom:0}
+.mob-outer{display:none;margin-bottom:30px}
 
 /* Mobile ticket shell — Arial Narrow only */
 .mob-ticket{background:#fff;border-top:2px solid #ADADAD;border-bottom:2px solid #ADADAD;font-family:'Arial Narrow',Arial,sans-serif;user-select:none}
@@ -165,12 +165,6 @@ nav.scrolled{background:rgba(255,250,240,.96);backdrop-filter:blur(14px);-webkit
   .mob-outer{display:block}
 }
 
-/* ── VIEWPORT FIT — tall enough screens (≥900px) ── */
-@media(min-height:900px){
-  .wrap{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
-  .ticket-scroll{flex:1;min-height:0;padding-bottom:0;margin-bottom:0}
-  .pg-ft{display:none}
-}
 </style>
 </head>
 <body>
